@@ -98,7 +98,7 @@ export default function ProfileScreen() {
                             <View style={styles.statIconWrapper}>
                                 <Icon name="assignment" size={24} color="#3b82f6" />
                             </View>
-                            <Text style={styles.statNumber}>125</Text>
+                            <Text style={styles.statNumber}>{profileData.tasksCompleted}</Text>
                             <Text style={styles.statLabel}>Tasks Done</Text>
                         </View>
                         
