@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     SafeAreaView,
     View,
@@ -9,6 +9,7 @@ import {
     StyleSheet,
     StatusBar,
     Dimensions,
+    ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -18,6 +19,8 @@ const CARD_MARGIN = 16;
 const CARD_PADDING = 20;
 
 export default function ProfileScreen() {
+    const [isLoading, setIsLoading] = useState(false);
+    
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#f8f9fa" barStyle="dark-content" />
