@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     SafeAreaView,
     View,
@@ -10,6 +10,7 @@ import {
     StatusBar,
     Dimensions,
     ActivityIndicator,
+    RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,6 +22,15 @@ const CARD_PADDING = 20;
 export default function ProfileScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
+    
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        // Simulate refresh
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
     
     return (
         <SafeAreaView style={styles.container}>
@@ -38,6 +48,9 @@ export default function ProfileScreen() {
                 showsVerticalScrollIndicator={false} 
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
             >
                 {/* Profile Card - Improved Visual Hierarchy */}
                 <View style={styles.profileCard}>
