@@ -1,3 +1,4 @@
+// ProfileScreen component for CollegeVyapari app
 import React from 'react';
 import {SafeAreaView,
        Image,
