@@ -39,9 +39,14 @@ export default function ProfileScreen() {
             {/* Optimized Header - 44px min touch target */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Profile</Text>
-                <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
-                    <Icon name="settings" size={22} color="#1a1a1a" />
-                </TouchableOpacity>
+                <View style={styles.headerButtons}>
+                    <TouchableOpacity style={styles.shareButton} activeOpacity={0.7}>
+                        <Icon name="share" size={22} color="#1a1a1a" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
+                        <Icon name="settings" size={22} color="#1a1a1a" />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView 
@@ -290,6 +295,26 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#1a1a1a',
         letterSpacing: -0.5,
+    },
+
+    headerButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    shareButton: {
+        width: 44, // Minimum touch target
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        marginRight: 8,
     },
     
     settingsButton: {
