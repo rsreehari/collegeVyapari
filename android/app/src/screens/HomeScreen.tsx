@@ -1,29 +1,68 @@
-import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import React from 'react';
+import {SafeAreaView,
+       Image,
+       Button,
+       ScrollView,
+       View,
+       TouchableOpacity,
+       Text, 
+       StyleSheet,
+       StatusBar} from 'react-native';
 
-export default function HomeScreen () {
+
+
+
+
+export default function HomeScreen(){
     return(
-        <View style={styles.container}>
-            <Text style={styles.hText}>Welcome to <Text style={styles.highlight}>College Vyapari</Text></Text>
-        </View>
-    )
-}
+        <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={"#2E3A59"} barStyle={"light-content"} />
+                <View style={styles.header}>
+
+                    <Text style={styles.headerTitle}>Welcome to the app</Text>
+                </View>
+                <Button style={styles.button} title='Post a task'>
+                </Button>
+
+
+
+           
+
+                 </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 0,
-        justifyContent: "center",
-        alignItems: "center"
+    container :{
+        flex :1,
+        backgroundColor :"#F5F6FA",
+
     },
-    hText:{
-        fontSize: 20,
-        fontWeight: "normal",
-        color: "#333333"
+    text :{
+        color : "black",
+        fontSize : 30,
     },
-    highlight:{
-        fontWeight: "bold",
-        color: "green",
-        fontSize: 20,
-        fontFamily: "fantasy"
-    }
-})
+    header :{
+        backgroundColor :"#2E3A59",
+        paddingVertical:20,
+        paddingHorizontal:24,
+        paddingTop:40,
+    },
+
+    headerTitle :{
+        color :"white",
+        fontSize : 22,
+        fontWeight :"bold",
+    },
+
+
+    title :{
+        fontSize : 18,
+        color :"#333",
+        margin:20,
+    },
+    button :{
+        alignContent :"center",
+        justifyContent :"center",
+    },
+});
