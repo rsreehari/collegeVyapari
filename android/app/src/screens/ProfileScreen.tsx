@@ -52,7 +52,12 @@ export default function ProfileScreen() {
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Profile</Text>
                 <View style={styles.headerButtons}>
-                    <TouchableOpacity style={styles.shareButton} activeOpacity={0.7}>
+                    <TouchableOpacity style={styles.shareButton} activeOpacity={0.7} onPress={() => {
+                        setProfileData(prev => ({
+                            ...prev,
+                            onTimePercentage: Math.min(100, prev.onTimePercentage + 1)
+                        }));
+                    }}>
                         <Icon name="share" size={22} color="#1a1a1a" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
