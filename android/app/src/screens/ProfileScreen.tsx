@@ -87,7 +87,12 @@ export default function ProfileScreen() {
                     <Text style={styles.userTitle}>{profileData.title}</Text>
                     <Text style={styles.userCollege}>{profileData.college}</Text>
                     
-                    <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
+                    <TouchableOpacity style={styles.editButton} activeOpacity={0.7} onPress={() => {
+                        setProfileData(prev => ({
+                            ...prev,
+                            rating: Math.min(5, prev.rating + 0.1)
+                        }));
+                    }}>
                         <Icon name="edit" size={16} color="#3b82f6" />
                         <Text style={styles.editButtonText}>Edit Profile</Text>
                     </TouchableOpacity>
