@@ -3,22 +3,23 @@
 ## Project Setup
 
 1. Install dependencies:
-	```sh
-	npm install
-	```
+   ```sh
+   npm install
+   ```
 2. Start Metro bundler:
-	```sh
-	npx react-native start
-	```
+   ```sh
+   npx react-native start
+   ```
 3. Run on Android:
-	```sh
-	npx react-native run-android
-	```
+   ```sh
+   npx react-native run-android
+   ```
 
 ## Notes
+
 - Make sure your Android SDK path is correct in `android/local.properties`.
 - If you see port errors, kill the process using `fuser -k 8081/tcp`.
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+  This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
