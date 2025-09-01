@@ -10,6 +10,11 @@ import {
     StatusBar,
     Dimensions,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 
 const { width } = Dimensions.get('window');
 
@@ -18,16 +23,21 @@ export default function ProfileScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#f8f9fa" barStyle="dark-content" />
             
-            {/* Header */}
+            {/* Header with Brand Identity */}
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Profile</Text>
+                <View style={styles.headerLeft}>
+                    <View style={styles.brandLogo}>
+                        <MaterialCommunityIcons name="school" size={24} color="#6366f1" />
+                    </View>
+                    <Text style={styles.headerTitle}>Profile</Text>
+                </View>
                 <TouchableOpacity style={styles.settingsButton}>
-                    <Text style={styles.settingsIcon}>⚙️</Text>
+                    <Feather name="settings" size={22} color="#6b7280" />
                 </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-                {/* Profile Card */}
+                {/* Enhanced Profile Card */}
                 <View style={styles.profileCard}>
                     <View style={styles.profileImageContainer}>
                         <Image 
@@ -37,75 +47,110 @@ export default function ProfileScreen() {
                             style={styles.profileImage}
                         />
                         <View style={styles.statusBadge}>
-                            <Text style={styles.statusIcon}>✓</Text>
+                            <MaterialCommunityIcons name="check-bold" size={16} color="#ffffff" />
+                        </View>
+                        <View style={styles.levelBadge}>
+                            <FontAwesome name="star" size={12} color="#fbbf24" />
+                            <Text style={styles.levelText}>Pro</Text>
                         </View>
                     </View>
                     
                     <Text style={styles.userName}>R Sreehari</Text>
-                    <Text style={styles.userYear}>Senior, Computer Science</Text>
-                    <Text style={styles.university}>Your College Name</Text>
+                    <View style={styles.userDetailsRow}>
+                        <MaterialCommunityIcons name="school-outline" size={16} color="#6b7280" />
+                        <Text style={styles.userYear}>Senior, Computer Science</Text>
+                    </View>
+                    <View style={styles.userDetailsRow}>
+                        <Ionicons name="location-outline" size={16} color="#6b7280" />
+                        <Text style={styles.university}>Your College Name</Text>
+                    </View>
                 </View>
 
-                {/* Performance Dashboard */}
+                {/* Performance Dashboard with Enhanced Icons */}
                 <View style={styles.dashboardCard}>
-                    <Text style={styles.sectionTitle}>Performance Dashboard</Text>
+                    <View style={styles.sectionHeader}>
+                        <MaterialCommunityIcons name="chart-line" size={24} color="#3b82f6" />
+                        <Text style={styles.sectionTitle}>Performance Dashboard</Text>
+                    </View>
                     <View style={styles.statsContainer}>
                         <View style={styles.statItem}>
+                            <View style={styles.statIconContainer}>
+                                <MaterialCommunityIcons name="check-circle" size={32} color="#10b981" />
+                            </View>
                             <Text style={styles.statNumber}>125</Text>
                             <Text style={styles.statLabel}>Tasks Done</Text>
                         </View>
+                        
+                        <View style={styles.statDivider} />
+                        
                         <View style={styles.statItem}>
-                            <View style={styles.ratingContainer}>
-                                <Text style={styles.statNumber}>4.8</Text>
-                                <Text style={styles.starIcon}>⭐</Text>
+                            <View style={styles.statIconContainer}>
+                                <FontAwesome name="star" size={28} color="#fbbf24" />
                             </View>
+                            <Text style={styles.statNumber}>4.8</Text>
                             <Text style={styles.statLabel}>Peer Rating</Text>
                         </View>
+                        
+                        <View style={styles.statDivider} />
+                        
                         <View style={styles.statItem}>
+                            <View style={styles.statIconContainer}>
+                                <MaterialCommunityIcons name="clock-check" size={32} color="#8b5cf6" />
+                            </View>
                             <Text style={styles.statNumber}>95%</Text>
                             <Text style={styles.statLabel}>On-Time</Text>
                         </View>
                     </View>
                 </View>
 
-                {/* Action Buttons */}
+                {/* Premium Action Buttons */}
                 <View style={styles.actionsGrid}>
                     <TouchableOpacity style={styles.actionButton}>
-                        <View style={styles.actionIcon}>
-                            <Text style={styles.actionEmoji}>📝</Text>
+                        <View style={[styles.actionIcon, { backgroundColor: '#eff6ff' }]}>
+                            <MaterialCommunityIcons name="plus-circle" size={32} color="#3b82f6" />
                         </View>
                         <Text style={styles.actionText}>Post Task</Text>
+                        <Text style={styles.actionSubtext}>Create new request</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.actionButton}>
-                        <View style={styles.actionIcon}>
-                            <Text style={styles.actionEmoji}>🔍</Text>
+                        <View style={[styles.actionIcon, { backgroundColor: '#f0fdf4' }]}>
+                            <Feather name="search" size={32} color="#10b981" />
                         </View>
                         <Text style={styles.actionText}>Find Help</Text>
+                        <Text style={styles.actionSubtext}>Browse available tasks</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.actionButton}>
-                        <View style={styles.actionIcon}>
-                            <Text style={styles.actionEmoji}>👥</Text>
+                        <View style={[styles.actionIcon, { backgroundColor: '#faf5ff' }]}>
+                            <MaterialCommunityIcons name="account-group" size={32} color="#8b5cf6" />
                         </View>
                         <Text style={styles.actionText}>Study Group</Text>
+                        <Text style={styles.actionSubtext}>Join or create groups</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.actionButton}>
-                        <View style={styles.actionIcon}>
-                            <Text style={styles.actionEmoji}>📚</Text>
+                        <View style={[styles.actionIcon, { backgroundColor: '#fffbeb' }]}>
+                            <MaterialCommunityIcons name="book-open-variant" size={32} color="#f59e0b" />
                         </View>
                         <Text style={styles.actionText}>Subjects</Text>
+                        <Text style={styles.actionSubtext}>Manage expertise</Text>
                     </TouchableOpacity>
                 </View>
 
-                {/* Weekly Progress */}
+                {/* Enhanced Weekly Progress */}
                 <View style={styles.progressCard}>
-                    <Text style={styles.sectionTitle}>Weekly Progress</Text>
+                    <View style={styles.sectionHeader}>
+                        <MaterialCommunityIcons name="trending-up" size={24} color="#10b981" />
+                        <Text style={styles.sectionTitle}>Weekly Progress</Text>
+                    </View>
                     
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
-                            <Text style={styles.progressLabel}>Tasks Completed</Text>
+                            <View style={styles.progressLabelRow}>
+                                <MaterialCommunityIcons name="clipboard-check" size={18} color="#3b82f6" />
+                                <Text style={styles.progressLabel}>Tasks Completed</Text>
+                            </View>
                             <Text style={styles.progressValue}>15/20</Text>
                         </View>
                         <View style={styles.progressBarContainer}>
@@ -115,7 +160,10 @@ export default function ProfileScreen() {
 
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
-                            <Text style={styles.progressLabel}>Goals Met</Text>
+                            <View style={styles.progressLabelRow}>
+                                <MaterialCommunityIcons name="target" size={18} color="#10b981" />
+                                <Text style={styles.progressLabel}>Goals Met</Text>
+                            </View>
                             <Text style={styles.progressValue}>3/4</Text>
                         </View>
                         <View style={styles.progressBarContainer}>
@@ -124,51 +172,106 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Achievements */}
+                {/* Premium Achievements */}
                 <View style={styles.achievementsCard}>
-                    <Text style={styles.sectionTitle}>Achievements</Text>
+                    <View style={styles.sectionHeader}>
+                        <FontAwesome name="trophy" size={24} color="#fbbf24" />
+                        <Text style={styles.sectionTitle}>Achievements</Text>
+                    </View>
                     <View style={styles.achievementsGrid}>
-                        <View style={styles.achievementBadge}>
-                            <Text style={styles.achievementIcon}>🏆</Text>
+                        <View style={styles.achievementItem}>
+                            <View style={styles.achievementBadge}>
+                                <FontAwesome name="trophy" size={28} color="#fbbf24" />
+                            </View>
+                            <Text style={styles.achievementName}>Top Helper</Text>
                         </View>
-                        <View style={styles.achievementBadgeInactive}>
-                            <Text style={styles.achievementIconInactive}>📚</Text>
+                        <View style={styles.achievementItem}>
+                            <View style={styles.achievementBadgeInactive}>
+                                <MaterialCommunityIcons name="book-multiple" size={28} color="#9ca3af" />
+                            </View>
+                            <Text style={styles.achievementNameInactive}>Scholar</Text>
                         </View>
-                        <View style={styles.achievementBadgeInactive}>
-                            <Text style={styles.achievementIconInactive}>⚡</Text>
+                        <View style={styles.achievementItem}>
+                            <View style={styles.achievementBadgeInactive}>
+                                <MaterialCommunityIcons name="lightning-bolt" size={28} color="#9ca3af" />
+                            </View>
+                            <Text style={styles.achievementNameInactive}>Speed Star</Text>
                         </View>
-                        <View style={styles.achievementBadge}>
-                            <Text style={styles.achievementIcon}>🎯</Text>
+                        <View style={styles.achievementItem}>
+                            <View style={styles.achievementBadge}>
+                                <MaterialCommunityIcons name="bullseye-arrow" size={28} color="#10b981" />
+                            </View>
+                            <Text style={styles.achievementName}>Goal Master</Text>
                         </View>
                     </View>
                 </View>
 
-                {/* Settings Menu */}
+                {/* Enhanced Settings Menu */}
                 <View style={styles.settingsCard}>
-                    <Text style={styles.sectionTitle}>Settings</Text>
+                    <View style={styles.sectionHeader}>
+                        <Feather name="settings" size={24} color="#6b7280" />
+                        <Text style={styles.sectionTitle}>Settings</Text>
+                    </View>
                     
                     <TouchableOpacity style={styles.settingItem}>
-                        <Text style={styles.settingText}>Profile Settings</Text>
-                        <Text style={styles.settingArrow}>›</Text>
+                        <View style={styles.settingLeft}>
+                            <View style={styles.settingIconContainer}>
+                                <Feather name="user" size={20} color="#3b82f6" />
+                            </View>
+                            <View style={styles.settingTextContainer}>
+                                <Text style={styles.settingText}>Profile Settings</Text>
+                                <Text style={styles.settingSubtext}>Manage your account</Text>
+                            </View>
+                        </View>
+                        <Feather name="chevron-right" size={20} color="#9ca3af" />
                     </TouchableOpacity>
+
+                    <View style={styles.settingDivider} />
 
                     <TouchableOpacity style={styles.settingItem}>
-                        <Text style={styles.settingText}>Notification Preferences</Text>
-                        <Text style={styles.settingArrow}>›</Text>
+                        <View style={styles.settingLeft}>
+                            <View style={styles.settingIconContainer}>
+                                <Ionicons name="notifications-outline" size={20} color="#f59e0b" />
+                            </View>
+                            <View style={styles.settingTextContainer}>
+                                <Text style={styles.settingText}>Notifications</Text>
+                                <Text style={styles.settingSubtext}>Configure alerts</Text>
+                            </View>
+                        </View>
+                        <Feather name="chevron-right" size={20} color="#9ca3af" />
                     </TouchableOpacity>
+
+                    <View style={styles.settingDivider} />
 
                     <TouchableOpacity style={styles.settingItem}>
-                        <Text style={styles.settingText}>Subject Expertise</Text>
-                        <Text style={styles.settingArrow}>›</Text>
+                        <View style={styles.settingLeft}>
+                            <View style={styles.settingIconContainer}>
+                                <MaterialCommunityIcons name="school-outline" size={20} color="#8b5cf6" />
+                            </View>
+                            <View style={styles.settingTextContainer}>
+                                <Text style={styles.settingText}>Subject Expertise</Text>
+                                <Text style={styles.settingSubtext}>Update your skills</Text>
+                            </View>
+                        </View>
+                        <Feather name="chevron-right" size={20} color="#9ca3af" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.settingItem, styles.lastSettingItem]}>
-                        <Text style={styles.settingText}>Privacy & Security</Text>
-                        <Text style={styles.settingArrow}>›</Text>
+                    <View style={styles.settingDivider} />
+
+                    <TouchableOpacity style={styles.settingItem}>
+                        <View style={styles.settingLeft}>
+                            <View style={styles.settingIconContainer}>
+                                <MaterialCommunityIcons name="shield-check-outline" size={20} color="#10b981" />
+                            </View>
+                            <View style={styles.settingTextContainer}>
+                                <Text style={styles.settingText}>Privacy & Security</Text>
+                                <Text style={styles.settingSubtext}>Manage permissions</Text>
+                            </View>
+                        </View>
+                        <Feather name="chevron-right" size={20} color="#9ca3af" />
                     </TouchableOpacity>
                 </View>
 
-                {/* Bottom spacing */}
                 <View style={{ height: 100 }} />
             </ScrollView>
         </SafeAreaView>
@@ -181,6 +284,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f8f9fa',
     },
     
+    // Enhanced Header
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -188,6 +292,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 16,
         backgroundColor: '#f8f9fa',
+    },
+
+    headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    brandLogo: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
     },
     
     headerTitle: {
@@ -210,102 +334,132 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
     },
     
-    settingsIcon: {
-        fontSize: 20,
-    },
-    
     scrollView: {
         flex: 1,
         paddingHorizontal: 20,
     },
     
-    // Profile Card
+    // Enhanced Profile Card
     profileCard: {
         backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 24,
+        borderRadius: 24,
+        padding: 28,
         alignItems: 'center',
         marginBottom: 24,
-        elevation: 3,
+        elevation: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
     },
     
     profileImageContainer: {
         position: 'relative',
-        marginBottom: 16,
+        marginBottom: 20,
     },
     
     profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 110,
+        height: 110,
+        borderRadius: 55,
         backgroundColor: '#f0f0f0',
+        borderWidth: 4,
+        borderColor: '#ffffff',
     },
     
     statusBadge: {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
+        bottom: 8,
+        right: 8,
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#10b981',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
         borderColor: '#ffffff',
     },
-    
-    statusIcon: {
+
+    levelBadge: {
+        position: 'absolute',
+        top: -4,
+        right: -4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#1f2937',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: '#ffffff',
+    },
+
+    levelText: {
         color: '#ffffff',
-        fontSize: 14,
+        fontSize: 10,
         fontWeight: 'bold',
+        marginLeft: 2,
     },
     
     userName: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#1a1a1a',
-        marginBottom: 4,
+        marginBottom: 8,
+        textAlign: 'center',
     },
     
+    userDetailsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+
     userYear: {
         fontSize: 16,
         color: '#6b7280',
-        marginBottom: 2,
+        marginLeft: 6,
+        fontWeight: '500',
     },
     
     university: {
         fontSize: 14,
         color: '#9ca3af',
+        marginLeft: 6,
     },
 
-    // Dashboard Card
-    dashboardCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 24,
-        marginBottom: 24,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
+    // Enhanced Section Headers
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
     },
 
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#1a1a1a',
-        marginBottom: 16,
+        marginLeft: 8,
+    },
+
+    // Enhanced Dashboard
+    dashboardCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 24,
+        padding: 28,
+        marginBottom: 24,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
     },
 
     statsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
 
     statItem: {
@@ -313,31 +467,33 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-    statNumber: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#3b82f6',
-        marginBottom: 4,
+    statIconContainer: {
+        marginBottom: 8,
     },
 
-    statLabel: {
-        fontSize: 14,
-        color: '#6b7280',
+    statNumber: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#1a1a1a',
+        marginBottom: 6,
         textAlign: 'center',
     },
 
-    ratingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 4,
+    statLabel: {
+        fontSize: 13,
+        color: '#6b7280',
+        textAlign: 'center',
+        fontWeight: '600',
     },
 
-    starIcon: {
-        fontSize: 20,
-        marginLeft: 4,
+    statDivider: {
+        width: 1,
+        height: 60,
+        backgroundColor: '#e5e7eb',
+        marginHorizontal: 20,
     },
 
-    // Action Buttons Grid
+    // Enhanced Action Buttons
     actionsGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -347,45 +503,11 @@ const styles = StyleSheet.create({
 
     actionButton: {
         backgroundColor: '#ffffff',
-        borderRadius: 16,
+        borderRadius: 20,
         padding: 20,
         alignItems: 'center',
-        width: '48%',
+        width: (width - 52) / 2,
         marginBottom: 12,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-
-    actionIcon: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#f1f5f9',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-
-    actionEmoji: {
-        fontSize: 24,
-    },
-
-    actionText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
-        textAlign: 'center',
-    },
-
-    // Progress Card
-    progressCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 24,
-        marginBottom: 24,
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -393,57 +515,102 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
     },
 
+    actionIcon: {
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+
+    actionText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#1a1a1a',
+        textAlign: 'center',
+        marginBottom: 4,
+    },
+
+    actionSubtext: {
+        fontSize: 12,
+        color: '#6b7280',
+        textAlign: 'center',
+        lineHeight: 16,
+    },
+
+    // Enhanced Progress Card
+    progressCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 24,
+        padding: 28,
+        marginBottom: 24,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+    },
+
     progressItem: {
-        marginBottom: 20,
+        marginBottom: 24,
     },
 
     progressHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 8,
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+
+    progressLabelRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 
     progressLabel: {
-        fontSize: 14,
-        color: '#6b7280',
+        fontSize: 15,
+        color: '#374151',
+        fontWeight: '600',
+        marginLeft: 8,
     },
 
     progressValue: {
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 15,
+        fontWeight: 'bold',
         color: '#1a1a1a',
     },
 
     progressBarContainer: {
-        height: 8,
+        height: 10,
         backgroundColor: '#e5e7eb',
-        borderRadius: 4,
+        borderRadius: 5,
         overflow: 'hidden',
     },
 
     progressBar: {
         height: '100%',
         backgroundColor: '#3b82f6',
-        borderRadius: 4,
+        borderRadius: 5,
     },
 
     progressBarGreen: {
         height: '100%',
         backgroundColor: '#10b981',
-        borderRadius: 4,
+        borderRadius: 5,
     },
 
-    // Achievements
+    // Enhanced Achievements
     achievementsCard: {
         backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 24,
+        borderRadius: 24,
+        padding: 28,
         marginBottom: 24,
-        elevation: 3,
+        elevation: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
     },
 
     achievementsGrid: {
@@ -451,70 +618,110 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
 
+    achievementItem: {
+        alignItems: 'center',
+    },
+
     achievementBadge: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: 68,
+        height: 68,
+        borderRadius: 34,
         backgroundColor: '#1f2937',
         justifyContent: 'center',
         alignItems: 'center',
-    },
-
-    achievementBadgeInactive: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#f3f4f6',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    achievementIcon: {
-        fontSize: 24,
-    },
-
-    achievementIconInactive: {
-        fontSize: 24,
-        opacity: 0.4,
-    },
-
-    // Settings Card
-    settingsCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 0,
-        marginBottom: 24,
+        marginBottom: 8,
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        overflow: 'hidden',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+    },
+
+    achievementBadgeInactive: {
+        width: 68,
+        height: 68,
+        borderRadius: 34,
+        backgroundColor: '#f3f4f6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8,
+        borderWidth: 2,
+        borderColor: '#e5e7eb',
+    },
+
+    achievementName: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: '#1a1a1a',
+        textAlign: 'center',
+    },
+
+    achievementNameInactive: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#9ca3af',
+        textAlign: 'center',
+    },
+
+    // Enhanced Settings
+    settingsCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 24,
+        paddingVertical: 12,
+        marginBottom: 24,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
     },
 
     settingItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 24,
-        paddingVertical: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6',
+        paddingHorizontal: 28,
+        paddingVertical: 18,
+        minHeight: 72,
     },
 
-    lastSettingItem: {
-        borderBottomWidth: 0,
+    settingLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+
+    settingIconContainer: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#f8fafc',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+
+    settingTextContainer: {
+        flex: 1,
     },
 
     settingText: {
         fontSize: 16,
-        color: '#374151',
+        color: '#1a1a1a',
+        fontWeight: '600',
+        marginBottom: 2,
+    },
+
+    settingSubtext: {
+        fontSize: 13,
+        color: '#6b7280',
         fontWeight: '500',
     },
 
-    settingArrow: {
-        fontSize: 20,
-        color: '#9ca3af',
-        fontWeight: 'bold',
+    settingDivider: {
+        height: 1,
+        backgroundColor: '#f3f4f6',
+        marginLeft: 88,
+        marginRight: 28,
     },
 });
