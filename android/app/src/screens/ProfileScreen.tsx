@@ -51,7 +51,7 @@ export default function ProfileScreen() {
                     
                     <Text style={styles.userName}>R Sreehari</Text>
                     <Text style={styles.userTitle}>Senior, Computer Science</Text>
-                    <Text style={styles.userCollege}>Your College Name</Text>
+                    <Text style={styles.userCollege}>National Institute of Technology</Text>
                 </View>
 
                 {/* Performance Dashboard - Perfect Alignment */}
