@@ -114,7 +114,7 @@ export default function ProfileScreen() {
                             <View style={styles.statIconWrapper}>
                                 <Icon name="schedule" size={24} color="#10b981" />
                             </View>
-                            <Text style={styles.statNumber}>95%</Text>
+                            <Text style={styles.statNumber}>{profileData.onTimePercentage}%</Text>
                             <Text style={styles.statLabel}>On-Time</Text>
                         </View>
                     </View>
