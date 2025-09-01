@@ -23,6 +23,14 @@ export default function ProfileScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [refreshing, setRefreshing] = useState(false);
+    const [profileData, setProfileData] = useState({
+        name: 'R Sreehari',
+        title: 'Senior, Computer Science',
+        college: 'National Institute of Technology',
+        tasksCompleted: 125,
+        rating: 4.8,
+        onTimePercentage: 95
+    });
     
     const onRefresh = useCallback(() => {
         setRefreshing(true);
