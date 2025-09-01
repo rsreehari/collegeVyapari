@@ -10,6 +10,8 @@ import {
     StatusBar,
     Dimensions,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 16;
@@ -24,7 +26,7 @@ export default function ProfileScreen() {
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Profile</Text>
                 <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
-                    <Text style={styles.settingsIcon}>⚙️</Text>
+                    <Icon name="settings" size={22} color="#1a1a1a" />
                 </TouchableOpacity>
             </View>
 
@@ -43,7 +45,7 @@ export default function ProfileScreen() {
                             style={styles.profileImage}
                         />
                         <View style={styles.verifiedBadge}>
-                            <Text style={styles.verifiedIcon}>✓</Text>
+                            <Icon name="verified" size={16} color="#ffffff" />
                         </View>
                     </View>
                     
@@ -59,7 +61,7 @@ export default function ProfileScreen() {
                     <View style={styles.statsGrid}>
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Text style={styles.statIcon}>📝</Text>
+                                <Icon name="assignment" size={24} color="#3b82f6" />
                             </View>
                             <Text style={styles.statNumber}>125</Text>
                             <Text style={styles.statLabel}>Tasks Done</Text>
@@ -67,7 +69,7 @@ export default function ProfileScreen() {
                         
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Text style={styles.statIcon}>⭐</Text>
+                                <Icon name="star" size={24} color="#f59e0b" />
                             </View>
                             <Text style={styles.statNumber}>4.8</Text>
                             <Text style={styles.statLabel}>Peer Rating</Text>
@@ -75,7 +77,7 @@ export default function ProfileScreen() {
                         
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Text style={styles.statIcon}>⏱️</Text>
+                                <Icon name="schedule" size={24} color="#10b981" />
                             </View>
                             <Text style={styles.statNumber}>95%</Text>
                             <Text style={styles.statLabel}>On-Time</Text>
@@ -88,14 +90,14 @@ export default function ProfileScreen() {
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Text style={styles.actionIcon}>➕</Text>
+                                <Icon name="add-task" size={28} color="#3b82f6" />
                             </View>
                             <Text style={styles.actionTitle}>Post Task</Text>
                         </TouchableOpacity>
                         
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Text style={styles.actionIcon}>🔍</Text>
+                                <Icon name="search" size={28} color="#10b981" />
                             </View>
                             <Text style={styles.actionTitle}>Find Help</Text>
                         </TouchableOpacity>
@@ -104,14 +106,14 @@ export default function ProfileScreen() {
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Text style={styles.actionIcon}>👥</Text>
+                                <Icon name="group" size={28} color="#f59e0b" />
                             </View>
                             <Text style={styles.actionTitle}>Study Group</Text>
                         </TouchableOpacity>
                         
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Text style={styles.actionIcon}>📚</Text>
+                                <Icon name="book" size={28} color="#8b5cf6" />
                             </View>
                             <Text style={styles.actionTitle}>Subjects</Text>
                         </TouchableOpacity>
@@ -125,7 +127,7 @@ export default function ProfileScreen() {
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Text style={styles.progressIcon}>📋</Text>
+                                <Icon name="assignment" size={18} color="#3b82f6" style={{marginRight: 8}} />
                                 <Text style={styles.progressLabel}>Tasks Completed</Text>
                             </View>
                             <Text style={styles.progressValue}>15/20</Text>
@@ -139,7 +141,7 @@ export default function ProfileScreen() {
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Text style={styles.progressIcon}>🎯</Text>
+                                <Icon name="flag" size={18} color="#10b981" style={{marginRight: 8}} />
                                 <Text style={styles.progressLabel}>Goals Met</Text>
                             </View>
                             <Text style={styles.progressValue}>3/4</Text>
@@ -158,28 +160,28 @@ export default function ProfileScreen() {
                     <View style={styles.achievementsGrid}>
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Text style={styles.achievementIcon}>🏆</Text>
+                                <Icon name="emoji-events" size={24} color="#f59e0b" />
                             </View>
                             <Text style={styles.achievementLabel}>Top Helper</Text>
                         </View>
                         
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
-                                <Text style={styles.achievementIcon}>📖</Text>
+                                <Icon name="school" size={24} color="#6b7280" />
                             </View>
                             <Text style={styles.achievementLabel}>Scholar</Text>
                         </View>
                         
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
-                                <Text style={styles.achievementIcon}>⚡</Text>
+                                <Icon name="flash-on" size={24} color="#6b7280" />
                             </View>
                             <Text style={styles.achievementLabel}>Fast</Text>
                         </View>
                         
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Text style={styles.achievementIcon}>🎯</Text>
+                                <Icon name="target" size={24} color="#10b981" />
                             </View>
                             <Text style={styles.achievementLabel}>Focused</Text>
                         </View>
@@ -193,11 +195,11 @@ export default function ProfileScreen() {
                     <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
                         <View style={styles.settingsLeft}>
                             <View style={styles.settingsIconContainer}>
-                                <Text style={styles.settingsItemIcon}>👤</Text>
+                                <Icon name="person" size={20} color="#3b82f6" />
                             </View>
                             <Text style={styles.settingsText}>Profile Settings</Text>
                         </View>
-                        <Text style={styles.settingsArrow}>›</Text>
+                        <Icon name="chevron-right" size={18} color="#9ca3af" />
                     </TouchableOpacity>
 
                     <View style={styles.settingsDivider} />
@@ -205,11 +207,11 @@ export default function ProfileScreen() {
                     <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
                         <View style={styles.settingsLeft}>
                             <View style={styles.settingsIconContainer}>
-                                <Text style={styles.settingsItemIcon}>🔔</Text>
+                                <Icon name="notifications" size={20} color="#f59e0b" />
                             </View>
                             <Text style={styles.settingsText}>Notification Preferences</Text>
                         </View>
-                        <Text style={styles.settingsArrow}>›</Text>
+                        <Icon name="chevron-right" size={18} color="#9ca3af" />
                     </TouchableOpacity>
 
                     <View style={styles.settingsDivider} />
@@ -217,11 +219,11 @@ export default function ProfileScreen() {
                     <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
                         <View style={styles.settingsLeft}>
                             <View style={styles.settingsIconContainer}>
-                                <Text style={styles.settingsItemIcon}>🎓</Text>
+                                <Icon name="school" size={20} color="#10b981" />
                             </View>
                             <Text style={styles.settingsText}>Subject Expertise</Text>
                         </View>
-                        <Text style={styles.settingsArrow}>›</Text>
+                        <Icon name="chevron-right" size={18} color="#9ca3af" />
                     </TouchableOpacity>
 
                     <View style={styles.settingsDivider} />
@@ -229,11 +231,11 @@ export default function ProfileScreen() {
                     <TouchableOpacity style={[styles.settingsItem, styles.lastSettingsItem]} activeOpacity={0.6}>
                         <View style={styles.settingsLeft}>
                             <View style={styles.settingsIconContainer}>
-                                <Text style={styles.settingsItemIcon}>🔒</Text>
+                                <Icon name="security" size={20} color="#ef4444" />
                             </View>
                             <Text style={styles.settingsText}>Privacy & Security</Text>
                         </View>
-                        <Text style={styles.settingsArrow}>›</Text>
+                        <Icon name="chevron-right" size={18} color="#9ca3af" />
                     </TouchableOpacity>
                 </View>
 
