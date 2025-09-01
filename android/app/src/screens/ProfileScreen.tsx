@@ -69,6 +69,11 @@ export default function ProfileScreen() {
                     <Text style={styles.userName}>R Sreehari</Text>
                     <Text style={styles.userTitle}>Senior, Computer Science</Text>
                     <Text style={styles.userCollege}>National Institute of Technology</Text>
+                    
+                    <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
+                        <Icon name="edit" size={16} color="#3b82f6" />
+                        <Text style={styles.editButtonText}>Edit Profile</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Performance Dashboard - Perfect Alignment */}
@@ -382,6 +387,23 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#9ca3af',
         textAlign: 'center',
+    },
+
+    editButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f1f5f9',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        marginTop: 12,
+    },
+
+    editButtonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#3b82f6',
+        marginLeft: 6,
     },
 
     // Performance Dashboard - Grid Layout
