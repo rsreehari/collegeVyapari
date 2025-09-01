@@ -34,8 +34,12 @@ export default function ProfileScreen() {
     
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        // Simulate refresh
+        // Simulate refresh with data update
         setTimeout(() => {
+            setProfileData(prev => ({
+                ...prev,
+                tasksCompleted: prev.tasksCompleted + 1
+            }));
             setRefreshing(false);
         }, 2000);
     }, []);
