@@ -20,6 +20,7 @@ const CARD_PADDING = 20;
 
 export default function ProfileScreen() {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     
     return (
         <SafeAreaView style={styles.container}>
