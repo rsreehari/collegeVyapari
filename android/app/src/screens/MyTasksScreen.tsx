@@ -4,8 +4,8 @@ import {View, Text, StyleSheet} from 'react-native';
 export default function MyTasksScreen(){
     return(
         <View>
-            <Text>Login Screen</Text>
-            
+            <Text>My Tasks Screen</Text>
+        
         </View>
     )
 }
