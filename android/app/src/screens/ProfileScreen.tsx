@@ -79,9 +79,9 @@ export default function ProfileScreen() {
                         </View>
                     </View>
                     
-                    <Text style={styles.userName}>R Sreehari</Text>
-                    <Text style={styles.userTitle}>Senior, Computer Science</Text>
-                    <Text style={styles.userCollege}>National Institute of Technology</Text>
+                    <Text style={styles.userName}>{profileData.name}</Text>
+                    <Text style={styles.userTitle}>{profileData.title}</Text>
+                    <Text style={styles.userCollege}>{profileData.college}</Text>
                     
                     <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
                         <Icon name="edit" size={16} color="#3b82f6" />
