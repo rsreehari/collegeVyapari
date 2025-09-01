@@ -62,7 +62,7 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
                         <Icon name="settings" size={22} color="#1a1a1a" />
-                    </TouchableOpacity>
+                </TouchableOpacity>
                 </View>
             </View>
 
