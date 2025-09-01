@@ -106,7 +106,7 @@ export default function ProfileScreen() {
                             <View style={styles.statIconWrapper}>
                                 <Icon name="star" size={24} color="#f59e0b" />
                             </View>
-                            <Text style={styles.statNumber}>4.8</Text>
+                            <Text style={styles.statNumber}>{profileData.rating}</Text>
                             <Text style={styles.statLabel}>Peer Rating</Text>
                         </View>
                         
