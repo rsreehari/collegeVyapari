@@ -1,0 +1,8 @@
+android/app/src/components/Button.tsx
+android/app/src/screens/LoginScreen.tsx
+android/app/src/screens/PostTaskScreen.tsx
+android/app/src/screens/ProfileScreen.tsx
+android/app/src/screens/ProfileScreen.tsx
+android/app/src/screens/SignupScreen.tsx
+android/app/src/screens/TaskDetailsScreen.tsx
+tsconfig.json

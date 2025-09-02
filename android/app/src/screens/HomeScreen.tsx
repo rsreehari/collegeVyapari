@@ -24,6 +24,8 @@ export default function HomeScreen() {
               <Text style={styles.price}>₹{item.budget}</Text>
             </TouchableOpacity>
           )}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     </SafeAreaView>
@@ -34,32 +36,34 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#2E3A59' },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 20,
     backgroundColor: "#fff",
-},
-
+  },
+  listContainer: {
+    paddingBottom: 20,
+  },
   intro: {
     fontSize: 18,
     fontFamily: 'Arial',
     fontWeight: 'bold',
     color: '#111827',
+    textAlign: 'center',
+    marginBottom: 8,
   },
-
   tagLine: {
     fontFamily: 'lucida grande, tahoma, verdana, arial, sans-serif',
     fontSize: 11,
     color: '#141823',
     marginBottom: 20,
+    textAlign: 'center',
   },
-
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#111827',
     marginBottom: 20,
+    textAlign: 'center',
   },
-
   card: {
     padding: 16,
     borderRadius: 12,
@@ -69,19 +73,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, 
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
   },
-
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: '#374151',
     marginBottom: 6,
   },
-
   price: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#10B981', 
+    color: '#10B981',
   },
 });

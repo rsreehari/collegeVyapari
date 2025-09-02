@@ -1,11 +1,19 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {SafeAreaView,
+       View,
+       Text, 
+       StatusBar} from 'react-native';
 
 export default function SignupScreen(){
     return(
-        <View>
-            <Text>Signup Screen</Text>
-        
-        </View>
-    )
+        <SafeAreaView style={{flex: 1, backgroundColor: "#F5F6FA"}}>
+            <StatusBar backgroundColor={"#2E3A59"} barStyle={"light-content"} />
+                <View style={{backgroundColor: "#2E3A59", paddingVertical: 20, paddingHorizontal: 24, paddingTop: 40}}>
+                    <Text style={{color: "white", fontSize: 22, fontWeight: "bold"}}>Signup Screen</Text>
+                </View>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20}}>
+                    <Text style={{fontSize: 18, color: "#333", textAlign: 'center'}}>Signup functionality coming soon</Text>
+                </View>
+        </SafeAreaView>
+    );
 }
