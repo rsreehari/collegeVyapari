@@ -1,22 +1,20 @@
 import React, { useState, useCallback } from 'react';
 import {
     SafeAreaView,
-    View,
-    Text,
     Image,
-    TouchableOpacity,
     ScrollView,
+    View,
+    TouchableOpacity,
+    Text,
     StyleSheet,
     StatusBar,
-    Dimensions,
-    ActivityIndicator,
     RefreshControl,
+    Dimensions
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');
-const CARD_MARGIN = 16;
+const CARD_MARGIN = 20;
 const CARD_PADDING = 20;
 
 export default function ProfileScreen() {
@@ -34,7 +32,6 @@ export default function ProfileScreen() {
     
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        // Simulate refresh with data update
         setTimeout(() => {
             setProfileData(prev => ({
                 ...prev,
@@ -48,21 +45,25 @@ export default function ProfileScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#f8f9fa" barStyle="dark-content" />
             
-            {/* Optimized Header - 44px min touch target */}
+            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Profile</Text>
                 <View style={styles.headerButtons}>
-                    <TouchableOpacity style={styles.shareButton} activeOpacity={0.7} onPress={() => {
-                        setProfileData(prev => ({
-                            ...prev,
-                            onTimePercentage: Math.min(100, prev.onTimePercentage + 1)
-                        }));
-                    }}>
+                    <TouchableOpacity 
+                        style={styles.shareButton} 
+                        activeOpacity={0.7} 
+                        onPress={() => {
+                            setProfileData(prev => ({
+                                ...prev,
+                                onTimePercentage: Math.min(100, prev.onTimePercentage + 1)
+                            }));
+                        }}
+                    >
                         <Icon name="share" size={22} color="#1a1a1a" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
                         <Icon name="settings" size={22} color="#1a1a1a" />
-                </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -74,7 +75,7 @@ export default function ProfileScreen() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                {/* Profile Card - Improved Visual Hierarchy */}
+                {/* Profile Card */}
                 <View style={styles.profileCard}>
                     <View style={styles.profileImageContainer}>
                         <Image 
@@ -92,18 +93,22 @@ export default function ProfileScreen() {
                     <Text style={styles.userTitle}>{profileData.title}</Text>
                     <Text style={styles.userCollege}>{profileData.college}</Text>
                     
-                    <TouchableOpacity style={styles.editButton} activeOpacity={0.7} onPress={() => {
-                        setProfileData(prev => ({
-                            ...prev,
-                            rating: Math.min(5, prev.rating + 0.1)
-                        }));
-                    }}>
+                    <TouchableOpacity 
+                        style={styles.editButton} 
+                        activeOpacity={0.7} 
+                        onPress={() => {
+                            setProfileData(prev => ({
+                                ...prev,
+                                rating: Math.min(5, prev.rating + 0.1)
+                            }));
+                        }}
+                    >
                         <Icon name="edit" size={16} color="#3b82f6" />
                         <Text style={styles.editButtonText}>Edit Profile</Text>
                     </TouchableOpacity>
                 </View>
 
-                {/* Performance Dashboard - Perfect Alignment */}
+                {/* Performance Dashboard */}
                 <View style={styles.dashboardCard}>
                     <Text style={styles.sectionTitle}>Performance Dashboard</Text>
                     
@@ -134,7 +139,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Action Grid - Perfect 44px Touch Targets */}
+                {/* Action Grid */}
                 <View style={styles.actionsContainer}>
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
@@ -169,7 +174,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Weekly Progress - Enhanced UX */}
+                {/* Weekly Progress */}
                 <View style={styles.progressCard}>
                     <Text style={styles.sectionTitle}>Weekly Progress</Text>
                     
@@ -202,7 +207,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Achievements - Clear Visual Hierarchy */}
+                {/* Achievements */}
                 <View style={styles.achievementsCard}>
                     <Text style={styles.sectionTitle}>Achievements</Text>
                     
@@ -237,7 +242,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Settings Menu - Perfect Android UX */}
+                {/* Settings Menu */}
                 <View style={styles.settingsCard}>
                     <Text style={styles.sectionTitle}>Settings</Text>
                     
@@ -288,7 +293,6 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Bottom Safe Area */}
                 <View style={styles.bottomSafeArea} />
             </ScrollView>
         </SafeAreaView>
@@ -301,7 +305,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f8f9fa',
     },
     
-    // Optimized Header - Following Android Guidelines
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -309,7 +312,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 16,
         backgroundColor: '#f8f9fa',
-        minHeight: 56, // Material Design standard
+        minHeight: 56,
     },
     
     headerTitle: {
@@ -325,7 +328,7 @@ const styles = StyleSheet.create({
     },
 
     shareButton: {
-        width: 44, // Minimum touch target
+        width: 44,
         height: 44,
         borderRadius: 22,
         backgroundColor: '#ffffff',
@@ -340,7 +343,7 @@ const styles = StyleSheet.create({
     },
     
     settingsButton: {
-        width: 44, // Minimum touch target
+        width: 44,
         height: 44,
         borderRadius: 22,
         backgroundColor: '#ffffff',
@@ -353,10 +356,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     
-    settingsIcon: {
-        fontSize: 22,
-    },
-    
     scrollView: {
         flex: 1,
     },
@@ -365,7 +364,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: CARD_MARGIN,
     },
     
-    // Enhanced Profile Card
     profileCard: {
         backgroundColor: '#ffffff',
         borderRadius: 24,
@@ -404,12 +402,6 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#ffffff',
         elevation: 3,
-    },
-    
-    verifiedIcon: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
     
     userName: {
@@ -453,7 +445,6 @@ const styles = StyleSheet.create({
         marginLeft: 6,
     },
 
-    // Performance Dashboard - Grid Layout
     dashboardCard: {
         backgroundColor: '#ffffff',
         borderRadius: 20,
@@ -495,10 +486,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
 
-    statIcon: {
-        fontSize: 24,
-    },
-
     statNumber: {
         fontSize: 24,
         fontWeight: '800',
@@ -515,7 +502,6 @@ const styles = StyleSheet.create({
         lineHeight: 16,
     },
 
-    // Action Cards - Perfect Touch Targets
     actionsContainer: {
         marginBottom: 20,
     },
@@ -531,8 +517,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 20,
         alignItems: 'center',
-        width: (width - (CARD_MARGIN * 2) - 12) / 2, // Perfect spacing
-        minHeight: 120, // Consistent height
+        width: (width - (CARD_MARGIN * 2) - 12) / 2,
+        minHeight: 120,
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -550,10 +536,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
 
-    actionIcon: {
-        fontSize: 28,
-    },
-
     actionTitle: {
         fontSize: 15,
         fontWeight: '700',
@@ -561,7 +543,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
-    // Enhanced Progress Card
     progressCard: {
         backgroundColor: '#ffffff',
         borderRadius: 20,
@@ -588,11 +569,6 @@ const styles = StyleSheet.create({
     progressLabelContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-    },
-
-    progressIcon: {
-        fontSize: 18,
-        marginRight: 8,
     },
 
     progressLabel: {
@@ -627,7 +603,6 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
 
-    // Achievements Grid
     achievementsCard: {
         backgroundColor: '#ffffff',
         borderRadius: 20,
@@ -672,10 +647,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
 
-    achievementIcon: {
-        fontSize: 24,
-    },
-
     achievementLabel: {
         fontSize: 12,
         fontWeight: '600',
@@ -683,7 +654,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
-    // Optimized Settings Menu
     settingsCard: {
         backgroundColor: '#ffffff',
         borderRadius: 20,
@@ -702,7 +672,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingVertical: 18,
-        minHeight: 64, // Optimal touch target
+        minHeight: 64,
     },
 
     lastSettingsItem: {
@@ -725,10 +695,6 @@ const styles = StyleSheet.create({
         marginRight: 16,
     },
 
-    settingsItemIcon: {
-        fontSize: 20,
-    },
-
     settingsText: {
         fontSize: 16,
         fontWeight: '600',
@@ -736,19 +702,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-    settingsArrow: {
-        fontSize: 18,
-        color: '#9ca3af',
-        fontWeight: '600',
-    },
-
     settingsDivider: {
         height: 1,
         backgroundColor: '#f3f4f6',
-        marginLeft: 76, // Align with text
+        marginLeft: 76,
     },
 
     bottomSafeArea: {
-        height: 80, // Space for bottom navigation
+        height: 80,
     },
 });

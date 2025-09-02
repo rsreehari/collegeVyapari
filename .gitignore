@@ -1,3 +1,16 @@
+node_modules/
+android/app/build/
+ios/build/
+*.log
+*.tmp
+*.swp
+*.DS_Store
+__tests__/coverage/
+*.keystore
+*.iml
+*.apk
+*.cxx
+*.lock
 # OSX
 #
 .DS_Store
