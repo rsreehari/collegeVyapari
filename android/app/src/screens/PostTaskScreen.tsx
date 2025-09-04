@@ -9,9 +9,9 @@ import {
     StatusBar,
     TextInput,
     Dimensions,
-    Alert
+    Alert,
+    Image
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { width, height } = Dimensions.get('window');
 const isSmallScreen = width < 360;
@@ -34,45 +34,45 @@ export default function PostTaskScreen() {
 
     // Improved categories with better icons and descriptions
     const categories = [
-        { 
-            id: 'academic', 
-            label: 'Academic Help', 
-            icon: 'school', 
+        {
+            id: 'academic',
+            label: 'Academic Help',
+            iconUri: 'https://img.icons8.com/ios-filled/22/4F46E5/school.png',
             color: '#4F46E5',
             description: 'Study materials, tutoring'
         },
-        { 
-            id: 'assignment', 
-            label: 'Assignment', 
-            icon: 'assignment', 
+        {
+            id: 'assignment',
+            label: 'Assignment',
+            iconUri: 'https://img.icons8.com/ios-filled/22/059669/assignment.png',
             color: '#059669',
             description: 'Homework, projects'
         },
-        { 
-            id: 'notes', 
-            label: 'Notes & Research', 
-            icon: 'note-alt', 
+        {
+            id: 'notes',
+            label: 'Notes & Research',
+            iconUri: 'https://img.icons8.com/ios-filled/22/DC2626/note.png',
             color: '#DC2626',
             description: 'Class notes, research help'
         },
-        { 
-            id: 'practical', 
-            label: 'Practical Work', 
-            icon: 'build', 
+        {
+            id: 'practical',
+            label: 'Practical Work',
+            iconUri: 'https://img.icons8.com/ios-filled/22/7C2D92/building.png',
             color: '#7C2D92',
             description: 'Lab work, coding'
         },
-        { 
-            id: 'delivery', 
-            label: 'Campus Delivery', 
-            icon: 'local-shipping', 
+        {
+            id: 'delivery',
+            label: 'Campus Delivery',
+            iconUri: 'https://img.icons8.com/ios-filled/22/D97706/delivery.png',
             color: '#D97706',
             description: 'Food, books, supplies'
         },
-        { 
-            id: 'events', 
-            label: 'Event Help', 
-            icon: 'event', 
+        {
+            id: 'events',
+            label: 'Event Help',
+            iconUri: 'https://img.icons8.com/ios-filled/22/0891B2/event.png',
             color: '#0891B2',
             description: 'Photography, setup'
         }
@@ -86,7 +86,7 @@ export default function PostTaskScreen() {
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.budget.trim()) newErrors.budget = 'Budget is required';
@@ -96,7 +96,7 @@ export default function PostTaskScreen() {
         ) {
             newErrors.budget = 'Budget must be a positive number';
         }
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -136,19 +136,25 @@ export default function PostTaskScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#2E3A59" barStyle="light-content" />
-            
+
             {/* Light Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton} activeOpacity={0.7}>
-                    <Icon name="arrow-back" size={24} color="#2E3A59" />
+                    <Image
+                        source={{ uri: 'https://img.icons8.com/ios-filled/24/2E3A59/left.png' }}
+                        style={styles.headerIcon}
+                    />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Post New Task</Text>
                 <TouchableOpacity style={styles.helpButton} activeOpacity={0.7}>
-                    <Icon name="help-outline" size={24} color="#2E3A59" />
+                    <Image
+                        source={{ uri: 'https://img.icons8.com/ios-filled/24/2E3A59/help.png' }}
+                        style={styles.headerIcon}
+                    />
                 </TouchableOpacity>
             </View>
 
-            <ScrollView 
+            <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
@@ -156,7 +162,10 @@ export default function PostTaskScreen() {
                 {/* Task Information Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <Icon name="edit" size={20} color="#2E3A59" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/edit.png' }}
+                            style={styles.cardHeaderIcon}
+                        />
                         <Text style={styles.cardTitle}>Task Details</Text>
                     </View>
 
@@ -206,7 +215,10 @@ export default function PostTaskScreen() {
                 {/* Improved Category Selection Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <Icon name="category" size={20} color="#2E3A59" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/category.png' }}
+                            style={styles.cardHeaderIcon}
+                        />
                         <Text style={styles.cardTitle}>Select Category</Text>
                     </View>
                     <Text style={styles.categorySubtitle}>Choose the type of task you need help with</Text>
@@ -233,13 +245,12 @@ export default function PostTaskScreen() {
                                         styles.categoryIconContainer,
                                         { backgroundColor: category.color + '15' }
                                     ]}>
-                                        <Icon 
-                                            name={category.icon} 
-                                            size={22} 
-                                            color={category.color} 
+                                        <Image
+                                            source={{ uri: category.iconUri }}
+                                            style={styles.categoryIcon}
                                         />
                                     </View>
-                                    
+
                                     <View style={styles.categoryTextContainer}>
                                         <Text style={[
                                             styles.categoryTitle,
@@ -256,7 +267,10 @@ export default function PostTaskScreen() {
                                 <View style={styles.categorySelector}>
                                     {selectedCategory === category.id ? (
                                         <View style={[styles.radioSelected, { backgroundColor: category.color }]}>
-                                            <Icon name="check" size={14} color="#FFFFFF" />
+                                            <Image
+                                                source={{ uri: 'https://img.icons8.com/ios-filled/14/ffffff/checkmark.png' }}
+                                                style={styles.checkIcon}
+                                            />
                                         </View>
                                     ) : (
                                         <View style={styles.radioUnselected} />
@@ -270,7 +284,10 @@ export default function PostTaskScreen() {
                 {/* Budget & Timeline Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <Icon name="attach-money" size={20} color="#2E3A59" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/money.png' }}
+                            style={styles.cardHeaderIcon}
+                        />
                         <Text style={styles.cardTitle}>Budget & Timeline</Text>
                     </View>
 
@@ -304,7 +321,10 @@ export default function PostTaskScreen() {
                 {/* Priority Selection Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <Icon name="priority-high" size={20} color="#2E3A59" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/high-priority.png' }}
+                            style={styles.cardHeaderIcon}
+                        />
                         <Text style={styles.cardTitle}>Priority Level</Text>
                     </View>
 
@@ -330,7 +350,10 @@ export default function PostTaskScreen() {
                                     {priority.label}
                                 </Text>
                                 {selectedPriority === priority.id && (
-                                    <Icon name="check-circle" size={20} color={priority.color} />
+                                    <Image
+                                        source={{ uri: 'https://img.icons8.com/ios-filled/20/' + priority.color.slice(1) + '/checkmark.png' }}
+                                        style={styles.priorityCheckIcon}
+                                    />
                                 )}
                             </TouchableOpacity>
                         ))}
@@ -339,21 +362,27 @@ export default function PostTaskScreen() {
 
                 {/* Action Buttons */}
                 <View style={styles.actionContainer}>
-                    <TouchableOpacity 
-                        style={styles.draftButton} 
+                    <TouchableOpacity
+                        style={styles.draftButton}
                         activeOpacity={0.8}
                         onPress={resetForm}
                     >
-                        <Icon name="save" size={18} color="#6B7280" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/18/6B7280/save--v1.png' }}
+                            style={styles.actionButtonIcon}
+                        />
                         <Text style={styles.draftButtonText}>Save Draft</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
-                        style={styles.submitButton} 
+                    <TouchableOpacity
+                        style={styles.submitButton}
                         activeOpacity={0.8}
                         onPress={handleSubmit}
                     >
-                        <Icon name="send" size={18} color="#FFFFFF" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-filled/18/FFFFFF/send.png' }}
+                            style={styles.actionButtonIcon}
+                        />
                         <Text style={styles.submitButtonText}>Post Task</Text>
                     </TouchableOpacity>
                 </View>
@@ -394,6 +423,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    helpButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#F3F4F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
     headerTitle: {
         color: '#1F2937',
         fontSize: isTablet ? 22 : 20,
@@ -403,13 +441,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
     },
 
-    helpButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
+    headerIcon: {
+        width: 24,
+        height: 24,
+        resizeMode: 'contain',
     },
 
     scrollView: {
@@ -439,6 +474,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
+    },
+
+    cardHeaderIcon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        tintColor: '#2E3A59',
     },
 
     cardTitle: {
@@ -505,7 +547,6 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
 
-    // Improved Category Styles
     categorySubtitle: {
         fontSize: 14,
         color: '#6B7280',
@@ -554,6 +595,12 @@ const styles = StyleSheet.create({
         marginRight: 16,
     },
 
+    categoryIcon: {
+        width: 22,
+        height: 22,
+        resizeMode: 'contain',
+    },
+
     categoryTextContainer: {
         flex: 1,
     },
@@ -594,6 +641,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#D1D5DB',
         backgroundColor: '#FFFFFF',
+    },
+
+    checkIcon: {
+        width: 14,
+        height: 14,
+        resizeMode: 'contain',
     },
 
     rowContainer: {
@@ -644,6 +697,12 @@ const styles = StyleSheet.create({
         color: '#1F2937',
     },
 
+    priorityCheckIcon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+    },
+
     actionContainer: {
         flexDirection: isSmallScreen ? 'column' : 'row',
         gap: 12,
@@ -692,5 +751,11 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#FFFFFF',
         marginLeft: 8,
+    },
+
+    actionButtonIcon: {
+        width: 18,
+        height: 18,
+        resizeMode: 'contain',
     },
 });
