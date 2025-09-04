@@ -11,7 +11,6 @@ import {
     RefreshControl,
     Dimensions
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 20;
@@ -59,7 +58,10 @@ export default function ProfileScreen() {
                             }));
                         }}
                     >
-                        <Icon name="share" size={22} color="#1a1a1a" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/000000/share--v1.png' }}
+                            style={styles.icon}
+                        />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.settingsButton}
@@ -68,7 +70,10 @@ export default function ProfileScreen() {
                             // Handle settings icon press here
                         }}
                     >
-                        <Icon name="settings" size={22} color="#1a1a1a" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/000000/settings.png' }}
+                            style={styles.icon}
+                        />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -91,7 +96,10 @@ export default function ProfileScreen() {
                             style={styles.profileImage}
                         />
                         <View style={styles.verifiedBadge}>
-                            <Icon name="verified" size={16} color="#ffffff" />
+                            <Image
+                                source={{ uri: 'https://img.icons8.com/ios-filled/24/ffffff/verified-account.png' }}
+                                style={styles.smallIcon}
+                            />
                         </View>
                     </View>
 
@@ -109,7 +117,10 @@ export default function ProfileScreen() {
                             }));
                         }}
                     >
-                        <Icon name="edit" size={16} color="#3b82f6" />
+                        <Image
+                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/3b82f6/edit--v1.png' }}
+                            style={styles.smallIconBlue}
+                        />
                         <Text style={styles.editButtonText}>Edit Profile</Text>
                     </TouchableOpacity>
                 </View>
@@ -121,7 +132,10 @@ export default function ProfileScreen() {
                     <View style={styles.statsGrid}>
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Icon name="assignment" size={24} color="#3b82f6" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/3b82f6/task.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.statNumber}>{profileData.tasksCompleted}</Text>
                             <Text style={styles.statLabel}>Tasks Done</Text>
@@ -129,15 +143,21 @@ export default function ProfileScreen() {
 
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Icon name="star" size={24} color="#f59e0b" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/f59e0b/star--v1.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
-                            <Text style={styles.statNumber}>{profileData.rating}</Text>
+                            <Text style={styles.statNumber}>{profileData.rating.toFixed(1)}</Text>
                             <Text style={styles.statLabel}>Peer Rating</Text>
                         </View>
 
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
-                                <Icon name="schedule" size={24} color="#10b981" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/10b981/clock.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.statNumber}>{profileData.onTimePercentage}%</Text>
                             <Text style={styles.statLabel}>On-Time</Text>
@@ -150,14 +170,20 @@ export default function ProfileScreen() {
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Icon name="add-task" size={28} color="#3b82f6" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/3b82f6/add--v1.png' }}
+                                    style={styles.iconLarge}
+                                />
                             </View>
                             <Text style={styles.actionTitle}>Post Task</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Icon name="search" size={28} color="#10b981" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/10b981/search--v1.png' }}
+                                    style={styles.iconLarge}
+                                />
                             </View>
                             <Text style={styles.actionTitle}>Find Help</Text>
                         </TouchableOpacity>
@@ -166,14 +192,20 @@ export default function ProfileScreen() {
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Icon name="group" size={28} color="#f59e0b" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/f59e0b/conference-call.png' }}
+                                    style={styles.iconLarge}
+                                />
                             </View>
                             <Text style={styles.actionTitle}>Study Group</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
-                                <Icon name="book" size={28} color="#8b5cf6" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/8b5cf6/book.png' }}
+                                    style={styles.iconLarge}
+                                />
                             </View>
                             <Text style={styles.actionTitle}>Subjects</Text>
                         </TouchableOpacity>
@@ -187,7 +219,10 @@ export default function ProfileScreen() {
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Icon name="assignment" size={18} color="#3b82f6" style={{ marginRight: 8 }} />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/24/3b82f6/task.png' }}
+                                    style={[styles.smallIcon, { marginRight: 8 }]}
+                                />
                                 <Text style={styles.progressLabel}>Tasks Completed</Text>
                             </View>
                             <Text style={styles.progressValue}>15/20</Text>
@@ -201,7 +236,10 @@ export default function ProfileScreen() {
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Icon name="flag" size={18} color="#10b981" style={{ marginRight: 8 }} />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/24/10b981/flag.png' }}
+                                    style={[styles.smallIcon, { marginRight: 8 }]}
+                                />
                                 <Text style={styles.progressLabel}>Goals Met</Text>
                             </View>
                             <Text style={styles.progressValue}>3/4</Text>
@@ -220,28 +258,40 @@ export default function ProfileScreen() {
                     <View style={styles.achievementsGrid}>
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Icon name="emoji-events" size={24} color="#f59e0b" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/f59e0b/trophy.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.achievementLabel}>Top Helper</Text>
                         </View>
 
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
-                                <Icon name="school" size={24} color="#6b7280" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/6b7280/graduation-cap.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.achievementLabel}>Scholar</Text>
                         </View>
 
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
-                                <Icon name="flash-on" size={24} color="#6b7280" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/6b7280/flash-on.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.achievementLabel}>Fast</Text>
                         </View>
 
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Icon name="target" size={24} color="#10b981" />
+                                <Image
+                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/10b981/target.png' }}
+                                    style={styles.iconMedium}
+                                />
                             </View>
                             <Text style={styles.achievementLabel}>Focused</Text>
                         </View>
@@ -357,6 +407,37 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#ffffff',
         elevation: 3,
+    },
+
+    icon: {
+        width: 22,
+        height: 22,
+        resizeMode: 'contain',
+    },
+
+    smallIcon: {
+        width: 16,
+        height: 16,
+        resizeMode: 'contain',
+    },
+
+    smallIconBlue: {
+        width: 16,
+        height: 16,
+        resizeMode: 'contain',
+        tintColor: '#3b82f6',
+    },
+
+    iconMedium: {
+        width: 30,
+        height: 30,
+        resizeMode: 'contain',
+    },
+
+    iconLarge: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
     },
 
     userName: {
