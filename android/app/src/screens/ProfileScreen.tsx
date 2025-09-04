@@ -29,7 +29,7 @@ export default function ProfileScreen() {
         rating: 4.8,
         onTimePercentage: 95
     });
-    
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -40,18 +40,18 @@ export default function ProfileScreen() {
             setRefreshing(false);
         }, 2000);
     }, []);
-    
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#f8f9fa" barStyle="dark-content" />
-            
+
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Profile</Text>
                 <View style={styles.headerButtons}>
-                    <TouchableOpacity 
-                        style={styles.shareButton} 
-                        activeOpacity={0.7} 
+                    <TouchableOpacity
+                        style={styles.shareButton}
+                        activeOpacity={0.7}
                         onPress={() => {
                             setProfileData(prev => ({
                                 ...prev,
@@ -61,14 +61,20 @@ export default function ProfileScreen() {
                     >
                         <Icon name="share" size={22} color="#1a1a1a" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
+                    <TouchableOpacity
+                        style={styles.settingsButton}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                            // Handle settings icon press here
+                        }}
+                    >
                         <Icon name="settings" size={22} color="#1a1a1a" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <ScrollView 
-                showsVerticalScrollIndicator={false} 
+            <ScrollView
+                showsVerticalScrollIndicator={false}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 refreshControl={
@@ -78,7 +84,7 @@ export default function ProfileScreen() {
                 {/* Profile Card */}
                 <View style={styles.profileCard}>
                     <View style={styles.profileImageContainer}>
-                        <Image 
+                        <Image
                             source={{
                                 uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
                             }}
@@ -88,14 +94,14 @@ export default function ProfileScreen() {
                             <Icon name="verified" size={16} color="#ffffff" />
                         </View>
                     </View>
-                    
+
                     <Text style={styles.userName}>{profileData.name}</Text>
                     <Text style={styles.userTitle}>{profileData.title}</Text>
                     <Text style={styles.userCollege}>{profileData.college}</Text>
-                    
-                    <TouchableOpacity 
-                        style={styles.editButton} 
-                        activeOpacity={0.7} 
+
+                    <TouchableOpacity
+                        style={styles.editButton}
+                        activeOpacity={0.7}
                         onPress={() => {
                             setProfileData(prev => ({
                                 ...prev,
@@ -111,7 +117,7 @@ export default function ProfileScreen() {
                 {/* Performance Dashboard */}
                 <View style={styles.dashboardCard}>
                     <Text style={styles.sectionTitle}>Performance Dashboard</Text>
-                    
+
                     <View style={styles.statsGrid}>
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
@@ -120,7 +126,7 @@ export default function ProfileScreen() {
                             <Text style={styles.statNumber}>{profileData.tasksCompleted}</Text>
                             <Text style={styles.statLabel}>Tasks Done</Text>
                         </View>
-                        
+
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
                                 <Icon name="star" size={24} color="#f59e0b" />
@@ -128,7 +134,7 @@ export default function ProfileScreen() {
                             <Text style={styles.statNumber}>{profileData.rating}</Text>
                             <Text style={styles.statLabel}>Peer Rating</Text>
                         </View>
-                        
+
                         <View style={styles.statBox}>
                             <View style={styles.statIconWrapper}>
                                 <Icon name="schedule" size={24} color="#10b981" />
@@ -148,7 +154,7 @@ export default function ProfileScreen() {
                             </View>
                             <Text style={styles.actionTitle}>Post Task</Text>
                         </TouchableOpacity>
-                        
+
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
                                 <Icon name="search" size={28} color="#10b981" />
@@ -156,7 +162,7 @@ export default function ProfileScreen() {
                             <Text style={styles.actionTitle}>Find Help</Text>
                         </TouchableOpacity>
                     </View>
-                    
+
                     <View style={styles.actionsRow}>
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
@@ -164,7 +170,7 @@ export default function ProfileScreen() {
                             </View>
                             <Text style={styles.actionTitle}>Study Group</Text>
                         </TouchableOpacity>
-                        
+
                         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
                             <View style={styles.actionIconContainer}>
                                 <Icon name="book" size={28} color="#8b5cf6" />
@@ -177,11 +183,11 @@ export default function ProfileScreen() {
                 {/* Weekly Progress */}
                 <View style={styles.progressCard}>
                     <Text style={styles.sectionTitle}>Weekly Progress</Text>
-                    
+
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Icon name="assignment" size={18} color="#3b82f6" style={{marginRight: 8}} />
+                                <Icon name="assignment" size={18} color="#3b82f6" style={{ marginRight: 8 }} />
                                 <Text style={styles.progressLabel}>Tasks Completed</Text>
                             </View>
                             <Text style={styles.progressValue}>15/20</Text>
@@ -195,7 +201,7 @@ export default function ProfileScreen() {
                     <View style={styles.progressItem}>
                         <View style={styles.progressHeader}>
                             <View style={styles.progressLabelContainer}>
-                                <Icon name="flag" size={18} color="#10b981" style={{marginRight: 8}} />
+                                <Icon name="flag" size={18} color="#10b981" style={{ marginRight: 8 }} />
                                 <Text style={styles.progressLabel}>Goals Met</Text>
                             </View>
                             <Text style={styles.progressValue}>3/4</Text>
@@ -210,7 +216,7 @@ export default function ProfileScreen() {
                 {/* Achievements */}
                 <View style={styles.achievementsCard}>
                     <Text style={styles.sectionTitle}>Achievements</Text>
-                    
+
                     <View style={styles.achievementsGrid}>
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
@@ -218,21 +224,21 @@ export default function ProfileScreen() {
                             </View>
                             <Text style={styles.achievementLabel}>Top Helper</Text>
                         </View>
-                        
+
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
                                 <Icon name="school" size={24} color="#6b7280" />
                             </View>
                             <Text style={styles.achievementLabel}>Scholar</Text>
                         </View>
-                        
+
                         <View style={styles.achievementItem}>
                             <View style={styles.achievementBadge}>
                                 <Icon name="flash-on" size={24} color="#6b7280" />
                             </View>
                             <Text style={styles.achievementLabel}>Fast</Text>
                         </View>
-                        
+
                         <View style={styles.achievementItem}>
                             <View style={[styles.achievementBadge, styles.achievementActive]}>
                                 <Icon name="target" size={24} color="#10b981" />
@@ -240,57 +246,6 @@ export default function ProfileScreen() {
                             <Text style={styles.achievementLabel}>Focused</Text>
                         </View>
                     </View>
-                </View>
-
-                {/* Settings Menu */}
-                <View style={styles.settingsCard}>
-                    <Text style={styles.sectionTitle}>Settings</Text>
-                    
-                    <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
-                        <View style={styles.settingsLeft}>
-                            <View style={styles.settingsIconContainer}>
-                                <Icon name="person" size={20} color="#3b82f6" />
-                            </View>
-                            <Text style={styles.settingsText}>Profile Settings</Text>
-                        </View>
-                        <Icon name="chevron-right" size={18} color="#9ca3af" />
-                    </TouchableOpacity>
-
-                    <View style={styles.settingsDivider} />
-
-                    <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
-                        <View style={styles.settingsLeft}>
-                            <View style={styles.settingsIconContainer}>
-                                <Icon name="notifications" size={20} color="#f59e0b" />
-                            </View>
-                            <Text style={styles.settingsText}>Notification Preferences</Text>
-                        </View>
-                        <Icon name="chevron-right" size={18} color="#9ca3af" />
-                    </TouchableOpacity>
-
-                    <View style={styles.settingsDivider} />
-
-                    <TouchableOpacity style={styles.settingsItem} activeOpacity={0.6}>
-                        <View style={styles.settingsLeft}>
-                            <View style={styles.settingsIconContainer}>
-                                <Icon name="school" size={20} color="#10b981" />
-                            </View>
-                            <Text style={styles.settingsText}>Subject Expertise</Text>
-                        </View>
-                        <Icon name="chevron-right" size={18} color="#9ca3af" />
-                    </TouchableOpacity>
-
-                    <View style={styles.settingsDivider} />
-
-                    <TouchableOpacity style={[styles.settingsItem, styles.lastSettingsItem]} activeOpacity={0.6}>
-                        <View style={styles.settingsLeft}>
-                            <View style={styles.settingsIconContainer}>
-                                <Icon name="security" size={20} color="#ef4444" />
-                            </View>
-                            <Text style={styles.settingsText}>Privacy & Security</Text>
-                        </View>
-                        <Icon name="chevron-right" size={18} color="#9ca3af" />
-                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.bottomSafeArea} />
@@ -304,7 +259,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f8f9fa',
     },
-    
+
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -314,7 +269,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f8f9fa',
         minHeight: 56,
     },
-    
+
     headerTitle: {
         fontSize: 28,
         fontWeight: '700',
@@ -341,7 +296,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         marginRight: 8,
     },
-    
+
     settingsButton: {
         width: 44,
         height: 44,
@@ -355,7 +310,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3,
     },
-    
+
     scrollView: {
         flex: 1,
     },
@@ -363,7 +318,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: CARD_MARGIN,
     },
-    
+
     profileCard: {
         backgroundColor: '#ffffff',
         borderRadius: 24,
@@ -376,19 +331,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 12,
     },
-    
+
     profileImageContainer: {
         position: 'relative',
         marginBottom: 20,
     },
-    
+
     profileImage: {
         width: 100,
         height: 100,
         borderRadius: 50,
         backgroundColor: '#f0f0f0',
     },
-    
+
     verifiedBadge: {
         position: 'absolute',
         bottom: 4,
@@ -403,7 +358,7 @@ const styles = StyleSheet.create({
         borderColor: '#ffffff',
         elevation: 3,
     },
-    
+
     userName: {
         fontSize: 26,
         fontWeight: '800',
@@ -412,7 +367,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         letterSpacing: -0.5,
     },
-    
+
     userTitle: {
         fontSize: 16,
         fontWeight: '600',
@@ -420,7 +375,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
         textAlign: 'center',
     },
-    
+
     userCollege: {
         fontSize: 14,
         fontWeight: '500',
@@ -652,60 +607,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#6b7280',
         textAlign: 'center',
-    },
-
-    settingsCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        overflow: 'hidden',
-        marginBottom: 20,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-    },
-
-    settingsItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 18,
-        minHeight: 64,
-    },
-
-    lastSettingsItem: {
-        borderBottomWidth: 0,
-    },
-
-    settingsLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-    },
-
-    settingsIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#f8fafc',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-
-    settingsText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1a1a1a',
-        flex: 1,
-    },
-
-    settingsDivider: {
-        height: 1,
-        backgroundColor: '#f3f4f6',
-        marginLeft: 76,
     },
 
     bottomSafeArea: {
