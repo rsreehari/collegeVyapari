@@ -6,18 +6,52 @@ import PostTaskScreen from '../screens/PostTaskScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Image } from 'react-native';
 
 const Tab = createBottomTabNavigator();
-// const Tab = createNativeTabNavigator();
 
-export default function AppNavigator(){
-    return(
-        <Tab.Navigator initialRouteName = "Home">
-                <Tab.Screen name = "Home" component={HomeScreen} options={{headerShown:false}} />
-                <Tab.Screen name = "MyTask" component={MyTasksScreen} options={{headerShown:false}} />
-                <Tab.Screen name = "PostTask" component={PostTaskScreen} options={{headerShown:false }}/>
-                <Tab.Screen name = "Profile" component={ProfileScreen} options={{headerShown:false}} />
-        </Tab.Navigator>
-    )
+export default function AppNavigator() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused }) => {
+          let iconUri = '';
+          switch (route.name) {
+            case 'Home':
+              iconUri = focused
+                ? 'https://img.icons8.com/ios-filled/32/2563EB/home.png'
+                : 'https://img.icons8.com/ios/32/94a3b8/home.png';
+              break;
+            case 'MyTask':
+              iconUri = focused
+                ? 'https://img.icons8.com/ios-filled/32/2563EB/list.png'
+                : 'https://img.icons8.com/ios/32/94a3b8/list.png';
+              break;
+            case 'PostTask':
+              iconUri = focused
+                ? 'https://img.icons8.com/ios-filled/32/2563EB/plus.png'
+                : 'https://img.icons8.com/ios/32/94a3b8/plus.png';
+              break;
+            case 'Profile':
+              iconUri = focused
+                ? 'https://img.icons8.com/ios-filled/32/2563EB/user-male-circle.png'
+                : 'https://img.icons8.com/ios/32/94a3b8/user-male-circle.png';
+              break;
+            default:
+              iconUri = '';
+          }
+          return <Image source={{ uri: iconUri }} style={{ width: 24, height: 24 }} />;
+        },
+        tabBarActiveTintColor: '#2563EB',
+        tabBarInactiveTintColor: '#94a3b8',
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="MyTask" component={MyTasksScreen} />
+      <Tab.Screen name="PostTask" component={PostTaskScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
 }
