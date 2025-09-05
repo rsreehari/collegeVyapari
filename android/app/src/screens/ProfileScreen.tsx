@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
     SafeAreaView,
-    Image,
     ScrollView,
     View,
     TouchableOpacity,
@@ -9,12 +8,12 @@ import {
     StyleSheet,
     StatusBar,
     RefreshControl,
-    Dimensions
+    Dimensions,
+    Animated,
 } from 'react-native';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
 const { width } = Dimensions.get('window');
-const CARD_MARGIN = 20;
-const CARD_PADDING = 20;
 
 export default function ProfileScreen() {
     const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +25,31 @@ export default function ProfileScreen() {
         college: 'National Institute of Technology',
         tasksCompleted: 125,
         rating: 4.8,
-        onTimePercentage: 95
+        onTimePercentage: 95,
+        points: 1850,
+        level: 6,
+        joinDate: '2023-08-15',
+        skills: ['React Native', 'JavaScript', 'Python', 'Machine Learning'],
+        achievements: ['Task Master', 'Early Bird', 'Helper Hero'],
     });
+
+    const fadeAnim = React.useRef(new Animated.Value(0)).current;
+    const slideAnim = React.useRef(new Animated.Value(30)).current;
+
+    React.useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -40,43 +62,40 @@ export default function ProfileScreen() {
         }, 2000);
     }, []);
 
+    const menuItems = [
+        { id: 'wallet', label: 'My Wallet', icon: '💰', color: Colors.success },
+        { id: 'settings', label: 'Settings', icon: '⚙️', color: Colors.textSecondary },
+        { id: 'help', label: 'Help & Support', icon: '❓', color: Colors.info },
+        { id: 'about', label: 'About', icon: 'ℹ️', color: Colors.textSecondary },
+        { id: 'logout', label: 'Logout', icon: '🚪', color: Colors.error },
+    ];
+
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor="#f8f9fa" barStyle="dark-content" />
+            <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
 
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Profile</Text>
-                <View style={styles.headerButtons}>
-                    <TouchableOpacity
-                        style={styles.shareButton}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                            setProfileData(prev => ({
-                                ...prev,
-                                onTimePercentage: Math.min(100, prev.onTimePercentage + 1)
-                            }));
-                        }}
-                    >
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/000000/share--v1.png' }}
-                            style={styles.icon}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.settingsButton}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                            // Handle settings icon press here
-                        }}
-                    >
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/000000/settings.png' }}
-                            style={styles.icon}
-                        />
-                    </TouchableOpacity>
+            <Animated.View 
+                style={[
+                    styles.header,
+                    {
+                        opacity: fadeAnim,
+                        transform: [{ translateY: slideAnim }],
+                    },
+                ]}
+            >
+                <View style={styles.headerContent}>
+                    <View style={styles.logoContainer}>
+                        <View style={styles.logoIcon}>
+                            <Text style={styles.logoIconText}>CV</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.appName}>College</Text>
+                    <Text style={styles.malayalamText}>വ്യാപാരി</Text>
+                    <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
                 </View>
-            </View>
+                <Text style={styles.headerTitle}>👤 Profile</Text>
+            </Animated.View>
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -87,218 +106,153 @@ export default function ProfileScreen() {
                 }
             >
                 {/* Profile Card */}
-                <View style={styles.profileCard}>
+                <Animated.View 
+                    style={[
+                        styles.profileCard,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
                     <View style={styles.profileImageContainer}>
-                        <Image
-                            source={{
-                                uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-                            }}
-                            style={styles.profileImage}
-                        />
+                        <View style={styles.profileImage}>
+                            <Text style={styles.profileInitial}>{profileData.name.charAt(0)}</Text>
+                        </View>
                         <View style={styles.verifiedBadge}>
-                            <Image
-                                source={{ uri: 'https://img.icons8.com/ios-filled/24/ffffff/verified-account.png' }}
-                                style={styles.smallIcon}
-                            />
+                            <Text style={styles.verifiedIcon}>✅</Text>
                         </View>
                     </View>
+                    
+                    <View style={styles.profileInfo}>
+                        <Text style={styles.profileName}>{profileData.name}</Text>
+                        <Text style={styles.profileTitle}>{profileData.title}</Text>
+                        <Text style={styles.profileCollege}>{profileData.college}</Text>
+                        
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.ratingIcon}>⭐</Text>
+                            <Text style={styles.ratingText}>{profileData.rating}</Text>
+                            <Text style={styles.ratingCount}>({profileData.tasksCompleted} reviews)</Text>
+                        </View>
+                    </View>
+                </Animated.View>
 
-                    <Text style={styles.userName}>{profileData.name}</Text>
-                    <Text style={styles.userTitle}>{profileData.title}</Text>
-                    <Text style={styles.userCollege}>{profileData.college}</Text>
-
-                    <TouchableOpacity
-                        style={styles.editButton}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                            setProfileData(prev => ({
-                                ...prev,
-                                rating: Math.min(5, prev.rating + 0.1)
-                            }));
-                        }}
-                    >
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-glyphs/30/3b82f6/edit--v1.png' }}
-                            style={styles.smallIconBlue}
-                        />
-                        <Text style={styles.editButtonText}>Edit Profile</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Performance Dashboard */}
-                <View style={styles.dashboardCard}>
-                    <Text style={styles.sectionTitle}>Performance Dashboard</Text>
-
+                {/* Stats Cards */}
+                <Animated.View 
+                    style={[
+                        styles.statsContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
                     <View style={styles.statsGrid}>
-                        <View style={styles.statBox}>
-                            <View style={styles.statIconWrapper}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/3b82f6/task.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.statNumber}>{profileData.tasksCompleted}</Text>
-                            <Text style={styles.statLabel}>Tasks Done</Text>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statIcon}>📋</Text>
+                            <Text style={styles.statValue}>{profileData.tasksCompleted}</Text>
+                            <Text style={styles.statLabel}>Tasks Completed</Text>
                         </View>
-
-                        <View style={styles.statBox}>
-                            <View style={styles.statIconWrapper}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/f59e0b/star--v1.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.statNumber}>{profileData.rating.toFixed(1)}</Text>
-                            <Text style={styles.statLabel}>Peer Rating</Text>
+                        
+                        <View style={styles.statCard}>
+                            <Text style={styles.statIcon}>💰</Text>
+                            <Text style={styles.statValue}>{profileData.points}</Text>
+                            <Text style={styles.statLabel}>Points Earned</Text>
                         </View>
-
-                        <View style={styles.statBox}>
-                            <View style={styles.statIconWrapper}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/10b981/clock.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.statNumber}>{profileData.onTimePercentage}%</Text>
-                            <Text style={styles.statLabel}>On-Time</Text>
+                        
+                        <View style={styles.statCard}>
+                            <Text style={styles.statIcon}>🎯</Text>
+                            <Text style={styles.statValue}>{profileData.onTimePercentage}%</Text>
+                            <Text style={styles.statLabel}>On Time</Text>
+                        </View>
+                        
+                        <View style={styles.statCard}>
+                            <Text style={styles.statIcon}>🏆</Text>
+                            <Text style={styles.statValue}>L{profileData.level}</Text>
+                            <Text style={styles.statLabel}>Level</Text>
                         </View>
                     </View>
-                </View>
+                </Animated.View>
 
-                {/* Action Grid */}
-                <View style={styles.actionsContainer}>
-                    <View style={styles.actionsRow}>
-                        <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
-                            <View style={styles.actionIconContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/3b82f6/add--v1.png' }}
-                                    style={styles.iconLarge}
-                                />
+                {/* Skills Section */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.sectionTitle}>🛠️ Skills</Text>
+                    <View style={styles.skillsContainer}>
+                        {profileData.skills.map((skill, index) => (
+                            <View key={index} style={styles.skillTag}>
+                                <Text style={styles.skillText}>{skill}</Text>
                             </View>
-                            <Text style={styles.actionTitle}>Post Task</Text>
+                        ))}
+                    </View>
+                </Animated.View>
+
+                {/* Achievements Section */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.sectionTitle}>🏆 Achievements</Text>
+                    <View style={styles.achievementsContainer}>
+                        {profileData.achievements.map((achievement, index) => (
+                            <View key={index} style={styles.achievementCard}>
+                                <Text style={styles.achievementIcon}>🏅</Text>
+                                <Text style={styles.achievementText}>{achievement}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </Animated.View>
+
+                {/* Menu Items */}
+                <Animated.View 
+                    style={[
+                        styles.menuContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    {menuItems.map((item) => (
+                        <TouchableOpacity key={item.id} style={styles.menuItem}>
+                            <View style={styles.menuItemLeft}>
+                                <Text style={styles.menuIcon}>{item.icon}</Text>
+                                <Text style={styles.menuLabel}>{item.label}</Text>
+                            </View>
+                            <Text style={styles.menuArrow}>›</Text>
                         </TouchableOpacity>
+                    ))}
+                </Animated.View>
 
-                        <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
-                            <View style={styles.actionIconContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/10b981/search--v1.png' }}
-                                    style={styles.iconLarge}
-                                />
-                            </View>
-                            <Text style={styles.actionTitle}>Find Help</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.actionsRow}>
-                        <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
-                            <View style={styles.actionIconContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/f59e0b/conference-call.png' }}
-                                    style={styles.iconLarge}
-                                />
-                            </View>
-                            <Text style={styles.actionTitle}>Study Group</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
-                            <View style={styles.actionIconContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/50/8b5cf6/book.png' }}
-                                    style={styles.iconLarge}
-                                />
-                            </View>
-                            <Text style={styles.actionTitle}>Subjects</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Weekly Progress */}
-                <View style={styles.progressCard}>
-                    <Text style={styles.sectionTitle}>Weekly Progress</Text>
-
-                    <View style={styles.progressItem}>
-                        <View style={styles.progressHeader}>
-                            <View style={styles.progressLabelContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/24/3b82f6/task.png' }}
-                                    style={[styles.smallIcon, { marginRight: 8 }]}
-                                />
-                                <Text style={styles.progressLabel}>Tasks Completed</Text>
-                            </View>
-                            <Text style={styles.progressValue}>15/20</Text>
-                        </View>
-                        <View style={styles.progressTrack}>
-                            <View style={[styles.progressFill, { width: '75%', backgroundColor: '#3b82f6' }]} />
-                        </View>
-                        <Text style={styles.progressPercentage}>75% Complete</Text>
-                    </View>
-
-                    <View style={styles.progressItem}>
-                        <View style={styles.progressHeader}>
-                            <View style={styles.progressLabelContainer}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/24/10b981/flag.png' }}
-                                    style={[styles.smallIcon, { marginRight: 8 }]}
-                                />
-                                <Text style={styles.progressLabel}>Goals Met</Text>
-                            </View>
-                            <Text style={styles.progressValue}>3/4</Text>
-                        </View>
-                        <View style={styles.progressTrack}>
-                            <View style={[styles.progressFill, { width: '75%', backgroundColor: '#10b981' }]} />
-                        </View>
-                        <Text style={styles.progressPercentage}>75% Complete</Text>
-                    </View>
-                </View>
-
-                {/* Achievements */}
-                <View style={styles.achievementsCard}>
-                    <Text style={styles.sectionTitle}>Achievements</Text>
-
-                    <View style={styles.achievementsGrid}>
-                        <View style={styles.achievementItem}>
-                            <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/f59e0b/trophy.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.achievementLabel}>Top Helper</Text>
-                        </View>
-
-                        <View style={styles.achievementItem}>
-                            <View style={styles.achievementBadge}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/6b7280/graduation-cap.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.achievementLabel}>Scholar</Text>
-                        </View>
-
-                        <View style={styles.achievementItem}>
-                            <View style={styles.achievementBadge}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/6b7280/flash-on.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.achievementLabel}>Fast</Text>
-                        </View>
-
-                        <View style={styles.achievementItem}>
-                            <View style={[styles.achievementBadge, styles.achievementActive]}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/ios-filled/48/10b981/target.png' }}
-                                    style={styles.iconMedium}
-                                />
-                            </View>
-                            <Text style={styles.achievementLabel}>Focused</Text>
-                        </View>
-                    </View>
-                </View>
-
-                <View style={styles.bottomSafeArea} />
+                {/* Join Date */}
+                <Animated.View 
+                    style={[
+                        styles.joinDateContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.joinDateText}>
+                        Member since {new Date(profileData.joinDate).toLocaleDateString('en-US', { 
+                            month: 'long', 
+                            year: 'numeric' 
+                        })}
+                    </Text>
+                </Animated.View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -307,390 +261,273 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: Colors.background,
     },
-
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        backgroundColor: '#f8f9fa',
-        minHeight: 56,
+        backgroundColor: Colors.primary,
+        paddingVertical: Spacing['3xl'],
+        paddingHorizontal: Layout.screenPadding,
+        borderBottomLeftRadius: BorderRadius['3xl'],
+        borderBottomRightRadius: BorderRadius['3xl'],
+        marginBottom: Spacing.xl,
     },
-
+    headerContent: {
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
+    },
+    logoContainer: {
+        marginBottom: Spacing.lg,
+    },
+    logoIcon: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: Colors.secondary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...Shadows.lg,
+    },
+    logoIconText: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize['2xl'],
+        fontWeight: Typography.fontWeight.bold,
+        letterSpacing: 1,
+    },
+    appName: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize['2xl'],
+        fontWeight: Typography.fontWeight.extrabold,
+        marginBottom: Spacing.xs,
+        letterSpacing: 1,
+    },
+    malayalamText: {
+        color: Colors.secondary,
+        fontSize: Typography.fontSize['3xl'],
+        fontWeight: Typography.fontWeight.bold,
+        marginBottom: Spacing.sm,
+        textAlign: 'center',
+    },
+    tagline: {
+        color: Colors.textSecondary,
+        fontSize: Typography.fontSize.xs,
+        fontWeight: Typography.fontWeight.medium,
+        textAlign: 'center',
+        letterSpacing: 1,
+        opacity: 0.8,
+    },
     headerTitle: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: '#1a1a1a',
-        letterSpacing: -0.5,
+        color: Colors.accent,
+        fontSize: Typography.fontSize.lg,
+        fontWeight: Typography.fontWeight.bold,
+        textAlign: 'center',
     },
-
-    headerButtons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-    shareButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#ffffff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        marginRight: 8,
-    },
-
-    settingsButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#ffffff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-    },
-
     scrollView: {
         flex: 1,
     },
-
     scrollContent: {
-        paddingHorizontal: CARD_MARGIN,
+        paddingHorizontal: Layout.screenPadding,
+        paddingBottom: Spacing['6xl'],
     },
-
     profileCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 24,
-        padding: 28,
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.xl,
+        padding: Spacing.xl,
         alignItems: 'center',
-        marginBottom: 20,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
+        marginBottom: Spacing.xl,
+        ...Shadows.md,
     },
-
     profileImageContainer: {
         position: 'relative',
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
-
     profileImage: {
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: Colors.interactive,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...Shadows.lg,
     },
-
+    profileInitial: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize['3xl'],
+        fontWeight: Typography.fontWeight.bold,
+    },
     verifiedBadge: {
         position: 'absolute',
-        bottom: 4,
-        right: 4,
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#10b981',
+        bottom: 0,
+        right: 0,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: Colors.success,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#ffffff',
-        elevation: 3,
+        borderColor: Colors.accent,
     },
-
-    icon: {
-        width: 22,
-        height: 22,
-        resizeMode: 'contain',
+    verifiedIcon: {
+        fontSize: Typography.fontSize.sm,
     },
-
-    smallIcon: {
-        width: 16,
-        height: 16,
-        resizeMode: 'contain',
+    profileInfo: {
+        alignItems: 'center',
     },
-
-    smallIconBlue: {
-        width: 16,
-        height: 16,
-        resizeMode: 'contain',
-        tintColor: '#3b82f6',
+    profileName: {
+        fontSize: Typography.fontSize['2xl'],
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.textPrimary,
+        marginBottom: Spacing.xs,
     },
-
-    iconMedium: {
-        width: 30,
-        height: 30,
-        resizeMode: 'contain',
+    profileTitle: {
+        fontSize: Typography.fontSize.base,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xs,
     },
-
-    iconLarge: {
-        width: 40,
-        height: 40,
-        resizeMode: 'contain',
-    },
-
-    userName: {
-        fontSize: 26,
-        fontWeight: '800',
-        color: '#1a1a1a',
-        marginBottom: 6,
-        textAlign: 'center',
-        letterSpacing: -0.5,
-    },
-
-    userTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#4b5563',
-        marginBottom: 4,
+    profileCollege: {
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.md,
         textAlign: 'center',
     },
-
-    userCollege: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#9ca3af',
-        textAlign: 'center',
-    },
-
-    editButton: {
+    ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f1f5f9',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginTop: 12,
     },
-
-    editButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#3b82f6',
-        marginLeft: 6,
+    ratingIcon: {
+        fontSize: Typography.fontSize.base,
+        marginRight: Spacing.xs,
     },
-
-    dashboardCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: CARD_PADDING,
-        marginBottom: 20,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
+    ratingText: {
+        fontSize: Typography.fontSize.base,
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.warning,
+        marginRight: Spacing.xs,
     },
-
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#1a1a1a',
-        marginBottom: 20,
-        letterSpacing: -0.3,
+    ratingCount: {
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textSecondary,
     },
-
+    statsContainer: {
+        marginBottom: Spacing.xl,
+    },
     statsGrid: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: 'space-between',
+        gap: Spacing.md,
     },
-
-    statBox: {
-        flex: 1,
+    statCard: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
         alignItems: 'center',
-        paddingVertical: 8,
+        width: '48%',
+        ...Shadows.sm,
     },
-
-    statIconWrapper: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#f8fafc',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 12,
+    statIcon: {
+        fontSize: Typography.fontSize['2xl'],
+        marginBottom: Spacing.sm,
     },
-
-    statNumber: {
-        fontSize: 24,
-        fontWeight: '800',
-        color: '#1a1a1a',
-        marginBottom: 4,
-        textAlign: 'center',
+    statValue: {
+        fontSize: Typography.fontSize.xl,
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.textPrimary,
+        marginBottom: Spacing.xs,
     },
-
     statLabel: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#6b7280',
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textSecondary,
         textAlign: 'center',
-        lineHeight: 16,
+        fontWeight: Typography.fontWeight.medium,
     },
-
-    actionsContainer: {
-        marginBottom: 20,
+    section: {
+        marginBottom: Spacing.xl,
     },
-
-    actionsRow: {
+    sectionTitle: {
+        fontSize: Typography.fontSize.lg,
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.textPrimary,
+        marginBottom: Spacing.lg,
+    },
+    skillsContainer: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: Spacing.sm,
+    },
+    skillTag: {
+        backgroundColor: Colors.surfaceSecondary,
+        borderRadius: BorderRadius.full,
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.sm,
+        borderWidth: 1,
+        borderColor: Colors.border,
+    },
+    skillText: {
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textPrimary,
+        fontWeight: Typography.fontWeight.medium,
+    },
+    achievementsContainer: {
+        gap: Spacing.md,
+    },
+    achievementCard: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
+        flexDirection: 'row',
+        alignItems: 'center',
+        ...Shadows.sm,
+    },
+    achievementIcon: {
+        fontSize: Typography.fontSize.lg,
+        marginRight: Spacing.lg,
+    },
+    achievementText: {
+        fontSize: Typography.fontSize.base,
+        color: Colors.textPrimary,
+        fontWeight: Typography.fontWeight.medium,
+    },
+    menuContainer: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.xl,
+        marginBottom: Spacing.xl,
+        ...Shadows.sm,
+    },
+    menuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 12,
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.lg,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.surfaceSecondary,
     },
-
-    actionCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: 20,
-        alignItems: 'center',
-        width: (width - (CARD_MARGIN * 2) - 12) / 2,
-        minHeight: 120,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-    },
-
-    actionIconContainer: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#f1f5f9',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-
-    actionTitle: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#1a1a1a',
-        textAlign: 'center',
-    },
-
-    progressCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: CARD_PADDING,
-        marginBottom: 20,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-    },
-
-    progressItem: {
-        marginBottom: 24,
-    },
-
-    progressHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-
-    progressLabelContainer: {
+    menuItemLeft: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-
-    progressLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#374151',
+    menuIcon: {
+        fontSize: Typography.fontSize.lg,
+        marginRight: Spacing.lg,
     },
-
-    progressValue: {
-        fontSize: 16,
-        fontWeight: '800',
-        color: '#1a1a1a',
+    menuLabel: {
+        fontSize: Typography.fontSize.base,
+        color: Colors.textPrimary,
+        fontWeight: Typography.fontWeight.medium,
     },
-
-    progressTrack: {
-        height: 8,
-        backgroundColor: '#e5e7eb',
-        borderRadius: 4,
-        overflow: 'hidden',
-        marginBottom: 8,
+    menuArrow: {
+        fontSize: Typography.fontSize.xl,
+        color: Colors.textSecondary,
+        fontWeight: Typography.fontWeight.bold,
     },
-
-    progressFill: {
-        height: '100%',
-        borderRadius: 4,
-    },
-
-    progressPercentage: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#6b7280',
-        textAlign: 'right',
-    },
-
-    achievementsCard: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        padding: CARD_PADDING,
-        marginBottom: 20,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-    },
-
-    achievementsGrid: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-
-    achievementItem: {
+    joinDateContainer: {
         alignItems: 'center',
-        flex: 1,
+        paddingVertical: Spacing.lg,
     },
-
-    achievementBadge: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#f3f4f6',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 8,
-        borderWidth: 2,
-        borderColor: '#e5e7eb',
-    },
-
-    achievementActive: {
-        backgroundColor: '#1f2937',
-        borderColor: '#1f2937',
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-
-    achievementLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#6b7280',
-        textAlign: 'center',
-    },
-
-    bottomSafeArea: {
-        height: 80,
+    joinDateText: {
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textSecondary,
+        fontStyle: 'italic',
     },
 });

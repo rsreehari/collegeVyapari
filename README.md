@@ -1,6 +1,7 @@
 # College Vyapari 🎓💰
+<img src="./android/app/src/assets/logo.jpeg" alt="logo" width="600" height="300" />
 
-> **Where students meet hustles** - A campus marketplace for students to find and complete tasks while earning money
+**"Where students meet hustles*"* - A campus marketplace for students to find and complete tasks while earning money
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.80.0-blue.svg)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)

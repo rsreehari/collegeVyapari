@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Image,
   Dimensions,
   RefreshControl,
+  Animated,
 } from 'react-native';
 import UserRatingCard from '../components/UserRatingCard';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
 const { width } = Dimensions.get('window');
 
@@ -32,12 +33,30 @@ export default function LeaderboardScreen() {
   const [selectedCategory, setSelectedCategory] = useState('overall');
   const [refreshing, setRefreshing] = useState(false);
 
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(30)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const categories = [
-    { id: 'overall', label: 'Overall', icon: 'https://img.icons8.com/ios-filled/24/4F46E5/trophy.png' },
-    { id: 'weekly', label: 'This Week', icon: 'https://img.icons8.com/ios-filled/24/10B981/calendar.png' },
-    { id: 'monthly', label: 'This Month', icon: 'https://img.icons8.com/ios-filled/24/F59E0B/calendar.png' },
-    { id: 'helpers', label: 'Top Helpers', icon: 'https://img.icons8.com/ios-filled/24/8B5CF6/handshake.png' },
-    { id: 'earners', label: 'Top Earners', icon: 'https://img.icons8.com/ios-filled/24/EF4444/money.png' },
+    { id: 'overall', label: 'Overall', icon: '🏆', color: Colors.interactive },
+    { id: 'weekly', label: 'This Week', icon: '📅', color: Colors.success },
+    { id: 'monthly', label: 'This Month', icon: '📆', color: Colors.warning },
+    { id: 'helpers', label: 'Top Helpers', icon: '🤝', color: '#8B5CF6' },
+    { id: 'earners', label: 'Top Earners', icon: '💰', color: Colors.error },
   ];
 
   // Mock data - in real app, this would come from API
@@ -99,9 +118,9 @@ export default function LeaderboardScreen() {
       name: 'Vikram Singh',
       college: 'IIM',
       rating: 4.5,
-      tasksCompleted: 108,
+      tasksCompleted: 98,
       onTimePercentage: 90,
-      points: 1820,
+      points: 1800,
       level: 5,
       profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
       rank: 5,
@@ -117,74 +136,55 @@ export default function LeaderboardScreen() {
     }, 2000);
   };
 
-  const renderRankBadge = (rank: number) => {
-    if (rank <= 3) {
-      const colors = ['#FFD700', '#C0C0C0', '#CD7F32']; // Gold, Silver, Bronze
-      const icons = [
-        'https://img.icons8.com/ios-filled/24/FFD700/trophy.png',
-        'https://img.icons8.com/ios-filled/24/C0C0C0/trophy.png',
-        'https://img.icons8.com/ios-filled/24/CD7F32/trophy.png',
-      ];
-      
-      return (
-        <View style={[styles.rankBadge, { backgroundColor: colors[rank - 1] }]}>
-          <Image source={{ uri: icons[rank - 1] }} style={styles.rankIcon} />
-        </View>
-      );
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1: return '🥇';
+      case 2: return '🥈';
+      case 3: return '🥉';
+      default: return `#${rank}`;
     }
-    
-    return (
-      <View style={styles.rankNumber}>
-        <Text style={styles.rankText}>#{rank}</Text>
-      </View>
-    );
   };
 
-  const renderChangeIndicator = (change: number) => {
-    if (change === 0) return null;
-    
-    const isPositive = change > 0;
-    return (
-      <View style={[
-        styles.changeIndicator,
-        { backgroundColor: isPositive ? '#10B981' : '#EF4444' }
-      ]}>
-        <Image
-          source={{
-            uri: isPositive
-              ? 'https://img.icons8.com/ios-filled/12/FFFFFF/up-arrow.png'
-              : 'https://img.icons8.com/ios-filled/12/FFFFFF/down-arrow.png'
-          }}
-          style={styles.changeIcon}
-        />
-        <Text style={styles.changeText}>{Math.abs(change)}</Text>
-      </View>
-    );
+  const getChangeIcon = (change: number) => {
+    if (change > 0) return '📈';
+    if (change < 0) return '📉';
+    return '➡️';
   };
 
   const renderLeaderboardItem = (user: LeaderboardUser) => (
     <View key={user.id} style={styles.leaderboardItem}>
       <View style={styles.rankContainer}>
-        {renderRankBadge(user.rank)}
-        {renderChangeIndicator(user.weeklyChange)}
-      </View>
-      
-      <View style={styles.userContainer}>
-        <UserRatingCard
-          user={user}
-          size="medium"
-          showDetails={true}
-        />
-      </View>
-      
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{user.points}</Text>
-          <Text style={styles.statLabel}>Points</Text>
+        <Text style={styles.rankIcon}>{getRankIcon(user.rank)}</Text>
+        <View style={styles.changeContainer}>
+          <Text style={styles.changeIcon}>{getChangeIcon(user.weeklyChange)}</Text>
+          <Text style={styles.changeText}>{Math.abs(user.weeklyChange)}</Text>
         </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>L{user.level}</Text>
-          <Text style={styles.statLabel}>Level</Text>
+      </View>
+      
+      <View style={styles.userInfo}>
+        <View style={styles.profileContainer}>
+          <View style={styles.profileImage}>
+            <Text style={styles.profileInitial}>{user.name.charAt(0)}</Text>
+          </View>
+          <View style={styles.userDetails}>
+            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userCollege}>{user.college}</Text>
+            <View style={styles.ratingContainer}>
+              <Text style={styles.ratingIcon}>⭐</Text>
+              <Text style={styles.ratingText}>{user.rating}</Text>
+            </View>
+          </View>
+        </View>
+        
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.points}</Text>
+            <Text style={styles.statLabel}>Points</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>L{user.level}</Text>
+            <Text style={styles.statLabel}>Level</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -193,96 +193,142 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Leaderboard</Text>
+      <Animated.View 
+        style={[
+          styles.header,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoIcon}>
+              <Text style={styles.logoIconText}>CV</Text>
+            </View>
+          </View>
+          <Text style={styles.appName}>College</Text>
+          <Text style={styles.malayalamText}>വ്യാപാരി</Text>
+          <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
+        </View>
+        <Text style={styles.headerTitle}>🏆 Leaderboard</Text>
         <Text style={styles.headerSubtitle}>Top performers in your college</Text>
-      </View>
+      </Animated.View>
 
-      {/* Category Tabs */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesContainer}
-        contentContainerStyle={styles.categoriesContent}
-      >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category.id}
-            style={[
-              styles.categoryTab,
-              selectedCategory === category.id && styles.categoryTabActive
-            ]}
-            onPress={() => setSelectedCategory(category.id)}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Category Tabs */}
+        <Animated.View 
+          style={[
+            styles.categoriesContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesContent}
           >
-            <Image
-              source={{ uri: category.icon }}
-              style={[
-                styles.categoryIcon,
-                selectedCategory === category.id && styles.categoryIconActive
-              ]}
-            />
-            <Text
-              style={[
-                styles.categoryText,
-                selectedCategory === category.id && styles.categoryTextActive
-              ]}
-            >
-              {category.label}
-            </Text>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category.id}
+                style={[
+                  styles.categoryTab,
+                  selectedCategory === category.id && [
+                    styles.categoryTabActive,
+                    { borderColor: category.color }
+                  ]
+                ]}
+                onPress={() => setSelectedCategory(category.id)}
+              >
+                <Text style={styles.categoryIcon}>{category.icon}</Text>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCategory === category.id && [
+                      styles.categoryTextActive,
+                      { color: category.color }
+                    ]
+                  ]}
+                >
+                  {category.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </Animated.View>
+
+        {/* Current User Rank */}
+        <Animated.View 
+          style={[
+            styles.currentUserCard,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <View style={styles.currentUserHeader}>
+            <Text style={styles.currentUserTitle}>Your Rank</Text>
+            <Text style={styles.currentUserRank}>#12</Text>
+          </View>
+          <View style={styles.currentUserStats}>
+            <View style={styles.currentUserStat}>
+              <Text style={styles.currentUserStatValue}>1,250</Text>
+              <Text style={styles.currentUserStatLabel}>Points</Text>
+            </View>
+            <View style={styles.currentUserStat}>
+              <Text style={styles.currentUserStatValue}>L5</Text>
+              <Text style={styles.currentUserStatLabel}>Level</Text>
+            </View>
+            <View style={styles.currentUserStat}>
+              <Text style={styles.currentUserStatValue}>+3</Text>
+              <Text style={styles.currentUserStatLabel}>This Week</Text>
+            </View>
+          </View>
+        </Animated.View>
+
+        {/* Leaderboard */}
+        <Animated.View 
+          style={[
+            styles.leaderboardContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          {leaderboardData.map(renderLeaderboardItem)}
+          
+          {/* Load More Button */}
+          <TouchableOpacity style={styles.loadMoreButton}>
+            <Text style={styles.loadMoreText}>📈 Load More</Text>
           </TouchableOpacity>
-        ))}
+        </Animated.View>
+
+        {/* Achievement Banner */}
+        <Animated.View 
+          style={[
+            styles.achievementBanner,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.achievementIcon}>🏆</Text>
+          <View style={styles.achievementContent}>
+            <Text style={styles.achievementTitle}>New Achievement!</Text>
+            <Text style={styles.achievementDescription}>Complete 10 tasks this week</Text>
+          </View>
+          <TouchableOpacity style={styles.achievementButton}>
+            <Text style={styles.achievementButtonText}>Claim</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </ScrollView>
-
-      {/* Current User Rank */}
-      <View style={styles.currentUserCard}>
-        <View style={styles.currentUserHeader}>
-          <Text style={styles.currentUserTitle}>Your Rank</Text>
-          <Text style={styles.currentUserRank}>#12</Text>
-        </View>
-        <View style={styles.currentUserStats}>
-          <View style={styles.currentUserStat}>
-            <Text style={styles.currentUserStatValue}>1,250</Text>
-            <Text style={styles.currentUserStatLabel}>Points</Text>
-          </View>
-          <View style={styles.currentUserStat}>
-            <Text style={styles.currentUserStatValue}>L5</Text>
-            <Text style={styles.currentUserStatLabel}>Level</Text>
-          </View>
-          <View style={styles.currentUserStat}>
-            <Text style={styles.currentUserStatValue}>+3</Text>
-            <Text style={styles.currentUserStatLabel}>This Week</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Leaderboard */}
-      <ScrollView
-        style={styles.leaderboardContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {leaderboardData.map(renderLeaderboardItem)}
-        
-        {/* Load More Button */}
-        <TouchableOpacity style={styles.loadMoreButton}>
-          <Text style={styles.loadMoreText}>Load More</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
-      {/* Achievement Banner */}
-      <View style={styles.achievementBanner}>
-        <Image
-          source={{ uri: 'https://img.icons8.com/ios-filled/32/F59E0B/trophy.png' }}
-          style={styles.achievementIcon}
-        />
-        <View style={styles.achievementContent}>
-          <Text style={styles.achievementTitle}>New Achievement!</Text>
-          <Text style={styles.achievementDescription}>
-            Complete 5 more tasks to unlock "Task Master" badge
-          </Text>
-        </View>
-      </View>
     </SafeAreaView>
   );
 }
@@ -290,88 +336,133 @@ export default function LeaderboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: Colors.background,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing['3xl'],
+    paddingHorizontal: Layout.screenPadding,
+    borderBottomLeftRadius: BorderRadius['3xl'],
+    borderBottomRightRadius: BorderRadius['3xl'],
+    marginBottom: Spacing.xl,
+  },
+  headerContent: {
     alignItems: 'center',
+    marginBottom: Spacing.lg,
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#1F2937',
-    marginBottom: 8,
+  logoContainer: {
+    marginBottom: Spacing.lg,
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#6B7280',
+  logoIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  logoIconText: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
+  },
+  appName: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.extrabold,
+    marginBottom: Spacing.xs,
+    letterSpacing: 1,
+  },
+  malayalamText: {
+    color: Colors.secondary,
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.bold,
+    marginBottom: Spacing.sm,
     textAlign: 'center',
   },
+  tagline: {
+    color: Colors.textSecondary,
+    fontSize: Typography.fontSize.xs,
+    fontWeight: Typography.fontWeight.medium,
+    textAlign: 'center',
+    letterSpacing: 1,
+    opacity: 0.8,
+  },
+  headerTitle: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+    textAlign: 'center',
+    marginBottom: Spacing.xs,
+  },
+  headerSubtitle: {
+    color: Colors.textSecondary,
+    fontSize: Typography.fontSize.sm,
+    textAlign: 'center',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: Layout.screenPadding,
+  },
   categoriesContainer: {
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   categoriesContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
+    gap: Spacing.sm,
   },
   categoryTab: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginRight: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.full,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    marginRight: Spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.border,
+    ...Shadows.sm,
   },
   categoryTabActive: {
-    backgroundColor: '#4F46E5',
-    borderColor: '#4F46E5',
+    backgroundColor: Colors.surfaceSecondary,
+    ...Shadows.md,
   },
   categoryIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 8,
-  },
-  categoryIconActive: {
-    tintColor: '#FFFFFF',
+    fontSize: Typography.fontSize.base,
+    marginRight: Spacing.sm,
   },
   categoryText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.textSecondary,
   },
   categoryTextActive: {
-    color: '#FFFFFF',
+    fontWeight: Typography.fontWeight.bold,
   },
   currentUserCard: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 20,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
+    ...Shadows.md,
   },
   currentUserHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   currentUserTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.textPrimary,
   },
   currentUserRank: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#4F46E5',
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.extrabold,
+    color: Colors.interactive,
   },
   currentUserStats: {
     flexDirection: 'row',
@@ -381,140 +472,164 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   currentUserStatValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: 4,
+    fontSize: Typography.fontSize.xl,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
   },
   currentUserStatLabel: {
-    fontSize: 12,
-    color: '#6B7280',
-    fontWeight: '500',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    fontWeight: Typography.fontWeight.medium,
   },
   leaderboardContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
+    marginBottom: Spacing.xl,
   },
   leaderboardItem: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    ...Shadows.sm,
   },
   rankContainer: {
     alignItems: 'center',
-    marginRight: 16,
-    minWidth: 40,
-  },
-  rankBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 4,
+    marginRight: Spacing.lg,
   },
   rankIcon: {
-    width: 20,
-    height: 20,
+    fontSize: Typography.fontSize['2xl'],
+    marginBottom: Spacing.xs,
   },
-  rankNumber: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F3F4F6',
-    justifyContent: 'center',
+  changeContainer: {
     alignItems: 'center',
-  },
-  rankText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#6B7280',
-  },
-  changeIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
   },
   changeIcon: {
-    width: 8,
-    height: 8,
-    marginRight: 2,
+    fontSize: Typography.fontSize.sm,
   },
   changeText: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontWeight: Typography.fontWeight.medium,
   },
-  userContainer: {
+  userInfo: {
     flex: 1,
   },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.interactive,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  profileInitial: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+  },
+  userDetails: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
+  },
+  userCollege: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingIcon: {
+    fontSize: Typography.fontSize.sm,
+    marginRight: Spacing.xs,
+  },
+  ratingText: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.warning,
+    fontWeight: Typography.fontWeight.semibold,
+  },
   statsContainer: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   statItem: {
     alignItems: 'center',
-    marginBottom: 8,
   },
   statValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: 2,
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#6B7280',
-    fontWeight: '500',
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontWeight: Typography.fontWeight.medium,
   },
   loadMoreButton: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
-    marginVertical: 20,
+    marginTop: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.sm,
   },
   loadMoreText: {
-    fontSize: 16,
-    color: '#6B7280',
-    fontWeight: '600',
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.interactive,
   },
   achievementBanner: {
-    backgroundColor: '#FEF3C7',
-    marginHorizontal: 20,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#F59E0B',
+    marginBottom: Spacing['6xl'],
+    ...Shadows.md,
   },
   achievementIcon: {
-    width: 32,
-    height: 32,
-    marginRight: 12,
+    fontSize: Typography.fontSize['2xl'],
+    marginRight: Spacing.lg,
   },
   achievementContent: {
     flex: 1,
   },
   achievementTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#92400E',
-    marginBottom: 4,
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
   },
   achievementDescription: {
-    fontSize: 14,
-    color: '#92400E',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+  },
+  achievementButton: {
+    backgroundColor: Colors.interactive,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+  },
+  achievementButtonText: {
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.accent,
   },
 });

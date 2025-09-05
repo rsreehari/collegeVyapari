@@ -11,8 +11,9 @@ import {
     TextInput,
     Dimensions,
     Alert,
-    Image
+    Animated,
 } from 'react-native';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
 const { width, height } = Dimensions.get('window');
 const isSmallScreen = width < 360;
@@ -53,51 +54,70 @@ export default function PostTaskScreen() {
     const [selectedPriority, setSelectedPriority] = useState('normal');
     const [errors, setErrors] = useState<FormErrors>({});
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Simplified categories with minimal design
+    const fadeAnim = React.useRef(new Animated.Value(0)).current;
+    const slideAnim = React.useRef(new Animated.Value(30)).current;
+
+    React.useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
+    // Categories with emojis and colors
     const categories = [
         {
             id: 'academic',
             label: 'Academic',
-            iconUri: 'https://img.icons8.com/ios-filled/20/6366F1/school.png',
-            color: '#6366F1'
+            icon: '📚',
+            color: Colors.interactive
         },
         {
             id: 'assignment',
             label: 'Assignment',
-            iconUri: 'https://img.icons8.com/ios-filled/20/10B981/assignment.png',
-            color: '#10B981'
+            icon: '📝',
+            color: Colors.success
         },
         {
             id: 'notes',
             label: 'Notes',
-            iconUri: 'https://img.icons8.com/ios-filled/20/F59E0B/note.png',
-            color: '#F59E0B'
+            icon: '📄',
+            color: Colors.warning
         },
         {
             id: 'practical',
             label: 'Practical',
-            iconUri: 'https://img.icons8.com/ios-filled/20/8B5CF6/building.png',
+            icon: '🔧',
             color: '#8B5CF6'
         },
         {
             id: 'delivery',
             label: 'Delivery',
-            iconUri: 'https://img.icons8.com/ios-filled/20/F97316/delivery.png',
+            icon: '🚚',
             color: '#F97316'
         },
         {
             id: 'events',
             label: 'Events',
-            iconUri: 'https://img.icons8.com/ios-filled/20/06B6D4/event.png',
-            color: '#06B6D4'
+            icon: '🎉',
+            color: Colors.info
         }
     ];
 
     const priorities = [
-        { id: 'low', label: 'Low', color: '#10B981' },
-        { id: 'normal', label: 'Normal', color: '#F59E0B' },
-        { id: 'high', label: 'Urgent', color: '#EF4444' }
+        { id: 'low', label: 'Low', color: Colors.success, icon: '🟢' },
+        { id: 'normal', label: 'Normal', color: Colors.warning, icon: '🟡' },
+        { id: 'high', label: 'Urgent', color: Colors.error, icon: '🔴' }
     ];
 
     const validateForm = () => {
@@ -106,25 +126,42 @@ export default function PostTaskScreen() {
         if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.budget.trim()) newErrors.budget = 'Budget is required';
-        if (
-            formData.budget &&
-            (isNaN(Number(formData.budget)) || Number(formData.budget) <= 0)
-        ) {
-            newErrors.budget = 'Budget must be a positive number';
-        }
+        if (formData.budget && isNaN(Number(formData.budget))) newErrors.budget = 'Budget must be a number';
+        if (formData.budget && Number(formData.budget) < 10) newErrors.budget = 'Minimum budget is ₹10';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
-        if (validateForm()) {
-            Alert.alert(
-                'Success!',
-                'Your task has been posted successfully.',
-                [{ text: 'OK', onPress: resetForm }]
-            );
+    const updateFormData = (field: keyof FormData, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: undefined }));
         }
+    };
+
+    const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            const formattedDate = selectedDate.toLocaleDateString('en-GB');
+            updateFormData('deadline', formattedDate);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+
+        setIsSubmitting(true);
+        
+        // Simulate API call
+        setTimeout(() => {
+            setIsSubmitting(false);
+            Alert.alert(
+                'Success! 🎉',
+                'Your task has been posted successfully! Students can now apply to help you.',
+                [{ text: 'OK', onPress: () => resetForm() }]
+            );
+        }, 2000);
     };
 
     const resetForm = () => {
@@ -142,56 +179,56 @@ export default function PostTaskScreen() {
         setErrors({});
     };
 
-    const updateFormData = (field: keyof FormData, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }));
-        }
-    };
-
-    const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            // Format date as DD/MM/YY
-            const day = selectedDate.getDate().toString().padStart(2, '0');
-            const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
-            const year = selectedDate.getFullYear().toString().slice(-2);
-            const formatted = `${day}/${month}/${year}`;
-            updateFormData('deadline', formatted);
-        }
-    };
-
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor="#FAFAFA" barStyle="dark-content" />
+            <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
 
-            {/* Minimal Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} activeOpacity={0.7}>
-                    <Image
-                        source={{ uri: 'https://img.icons8.com/ios-glyphs/20/1F2937/left.png' }}
-                        style={styles.headerIcon}
-                    />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Post Task</Text>
-                <View style={styles.spacer} />
-            </View>
+            {/* Header */}
+            <Animated.View 
+                style={[
+                    styles.header,
+                    {
+                        opacity: fadeAnim,
+                        transform: [{ translateY: slideAnim }],
+                    },
+                ]}
+            >
+                <View style={styles.headerContent}>
+                    <View style={styles.logoContainer}>
+                        <View style={styles.logoIcon}>
+                            <Text style={styles.logoIconText}>CV</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.appName}>College</Text>
+                    <Text style={styles.malayalamText}>വ്യാപാരി</Text>
+                    <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
+                </View>
+                <Text style={styles.headerTitle}>Post New Task</Text>
+            </Animated.View>
 
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Task Information - Compact */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Task Details</Text>
+                {/* Task Information */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.sectionTitle}>📝 Task Details</Text>
                     
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Title</Text>
                         <TextInput
-                            style={[styles.inputCompact, errors.title && styles.inputError]}
+                            style={[styles.input, errors.title && styles.inputError]}
                             placeholder="What do you need help with?"
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={Colors.textTertiary}
                             value={formData.title}
                             onChangeText={(text) => updateFormData('title', text)}
                             maxLength={80}
@@ -202,9 +239,9 @@ export default function PostTaskScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Description</Text>
                         <TextInput
-                            style={[styles.textAreaCompact, errors.description && styles.inputError]}
+                            style={[styles.textArea, errors.description && styles.inputError]}
                             placeholder="Brief description of your task..."
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={Colors.textTertiary}
                             value={formData.description}
                             onChangeText={(text) => updateFormData('description', text)}
                             multiline
@@ -220,9 +257,9 @@ export default function PostTaskScreen() {
                         <View style={styles.halfWidth}>
                             <Text style={styles.label}>Subject</Text>
                             <TextInput
-                                style={styles.inputCompact}
+                                style={styles.input}
                                 placeholder="e.g., Math"
-                                placeholderTextColor="#9CA3AF"
+                                placeholderTextColor={Colors.textTertiary}
                                 value={formData.subject}
                                 onChangeText={(text) => updateFormData('subject', text)}
                             />
@@ -231,9 +268,9 @@ export default function PostTaskScreen() {
                         <View style={styles.halfWidth}>
                             <Text style={styles.label}>Budget (₹)</Text>
                             <TextInput
-                                style={[styles.inputCompact, errors.budget && styles.inputError]}
+                                style={[styles.input, errors.budget && styles.inputError]}
                                 placeholder="Amount"
-                                placeholderTextColor="#9CA3AF"
+                                placeholderTextColor={Colors.textTertiary}
                                 value={formData.budget}
                                 onChangeText={(text) => updateFormData('budget', text)}
                                 keyboardType="numeric"
@@ -241,11 +278,19 @@ export default function PostTaskScreen() {
                             {errors.budget && <Text style={styles.errorText}>{errors.budget}</Text>}
                         </View>
                     </View>
-                </View>
+                </Animated.View>
 
-                {/* Category Selection - Minimal Grid */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Category</Text>
+                {/* Category Selection */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.sectionTitle}>🏷️ Category</Text>
                     
                     <View style={styles.categoryGrid}>
                         {categories.map((category) => (
@@ -266,102 +311,120 @@ export default function PostTaskScreen() {
                             >
                                 <View style={[
                                     styles.categoryIconWrapper,
-                                    { backgroundColor: selectedCategory === category.id ? category.color : '#F3F4F6' }
+                                    { backgroundColor: selectedCategory === category.id ? category.color : Colors.surfaceSecondary }
                                 ]}>
-                                    <Image
-                                        source={{ 
-                                            uri: selectedCategory === category.id ? 
-                                                category.iconUri.replace(category.color.slice(1), 'FFFFFF') : 
-                                                category.iconUri.replace(category.color.slice(1), '9CA3AF')
-                                        }}
-                                        style={styles.categoryIconSmall}
-                                    />
+                                    <Text style={styles.categoryIcon}>{category.icon}</Text>
                                 </View>
                                 <Text style={[
                                     styles.categoryLabel,
-                                    selectedCategory === category.id && { color: category.color, fontWeight: '600' }
+                                    selectedCategory === category.id && { color: category.color }
                                 ]}>
                                     {category.label}
                                 </Text>
                             </TouchableOpacity>
                         ))}
                     </View>
-                </View>
+                </Animated.View>
 
-                {/* Priority & Deadline - Column, Centered, with Date Picker */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Priority & Deadline</Text>
-                    <View style={styles.columnCenterContainer}>
-                        <View style={styles.priorityContainerColumn}>
-                            {priorities.map((priority) => (
-                                <TouchableOpacity
-                                    key={priority.id}
-                                    style={[
-                                        styles.priorityChip,
-                                        selectedPriority === priority.id && [
-                                            styles.priorityChipSelected,
-                                            { backgroundColor: priority.color + '15', borderColor: priority.color }
-                                        ]
-                                    ]}
-                                    onPress={() => {
-                                        setSelectedPriority(priority.id);
-                                        updateFormData('priority', priority.id);
-                                    }}
-                                    activeOpacity={0.7}
-                                >
-                                    <View style={[styles.priorityDot, { backgroundColor: priority.color }]} />
-                                    <Text style={[
-                                        styles.priorityLabel,
-                                        selectedPriority === priority.id && { 
-                                            color: priority.color,
-                                            fontWeight: '600'
-                                        }
-                                    ]}>
-                                        {priority.label}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                        <View style={styles.deadlineContainerColumn}>
-                            <Text style={styles.label}>Deadline</Text>
+                {/* Priority Selection */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                >
+                    <Text style={styles.sectionTitle}>⚡ Priority</Text>
+                    
+                    <View style={styles.priorityContainer}>
+                        {priorities.map((priority) => (
                             <TouchableOpacity
-                                style={[styles.inputCompact, { justifyContent: 'center' }]}
-                                onPress={() => setShowDatePicker(true)}
+                                key={priority.id}
+                                style={[
+                                    styles.priorityCard,
+                                    selectedPriority === priority.id && [
+                                        styles.priorityCardSelected,
+                                        { borderColor: priority.color }
+                                    ]
+                                ]}
+                                onPress={() => {
+                                    setSelectedPriority(priority.id);
+                                    updateFormData('priority', priority.id);
+                                }}
                                 activeOpacity={0.7}
                             >
-                                <Text style={{ color: formData.deadline ? '#1F2937' : '#9CA3AF', fontSize: 15 }}>
-                                    {formData.deadline || 'Select date'}
+                                <Text style={styles.priorityIcon}>{priority.icon}</Text>
+                                <Text style={[
+                                    styles.priorityLabel,
+                                    selectedPriority === priority.id && { color: priority.color }
+                                ]}>
+                                    {priority.label}
                                 </Text>
                             </TouchableOpacity>
-                            {showDatePicker && (
-                                <DateTimePicker
-                                    value={formData.deadline ? new Date(`20${formData.deadline.split('/')[2]}/${formData.deadline.split('/')[1]}/${formData.deadline.split('/')[0]}`) : new Date()}
-                                    mode="date"
-                                    display="default"
-                                    onChange={handleDateChange}
-                                />
-                            )}
-                        </View>
+                        ))}
                     </View>
-                </View>
+                </Animated.View>
 
-                {/* Action Button - Single CTA */}
-                <TouchableOpacity
-                    style={styles.submitButton}
-                    activeOpacity={0.8}
-                    onPress={handleSubmit}
+                {/* Deadline Selection */}
+                <Animated.View 
+                    style={[
+                        styles.section,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
                 >
-                    <Text style={styles.submitButtonText}>Post Task</Text>
-                </TouchableOpacity>
+                    <Text style={styles.sectionTitle}>📅 Deadline</Text>
+                    
+                    <TouchableOpacity
+                        style={styles.dateButton}
+                        onPress={() => setShowDatePicker(true)}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.dateButtonText}>
+                            {formData.deadline ? formData.deadline : 'Select deadline'}
+                        </Text>
+                        <Text style={styles.dateButtonIcon}>📅</Text>
+                    </TouchableOpacity>
+                    
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={handleDateChange}
+                        />
+                    )}
+                </Animated.View>
 
-                {/* Save Draft - Minimal Link */}
-                <TouchableOpacity
-                    style={styles.draftLink}
-                    activeOpacity={0.7}
-                    onPress={resetForm}
+                {/* Submit Button */}
+                <Animated.View 
+                    style={[
+                        styles.submitSection,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
                 >
-                    <Text style={styles.draftLinkText}>Save as Draft</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+                        onPress={handleSubmit}
+                        disabled={isSubmitting}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.submitButtonText}>
+                            {isSubmitting ? 'Posting Task...' : '🚀 Post Task'}
+                        </Text>
+                    </TouchableOpacity>
+                    
+                    <Text style={styles.submitNote}>
+                        💡 Your task will be visible to verified students in your college
+                    </Text>
+                </Animated.View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -370,260 +433,243 @@ export default function PostTaskScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAFAFA',
+        backgroundColor: Colors.background,
     },
-
     header: {
-        backgroundColor: '#FFFFFF',
-        paddingTop: 12,
-        paddingBottom: 12,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        backgroundColor: Colors.primary,
+        paddingVertical: Spacing['3xl'],
+        paddingHorizontal: Layout.screenPadding,
+        borderBottomLeftRadius: BorderRadius['3xl'],
+        borderBottomRightRadius: BorderRadius['3xl'],
+        marginBottom: Spacing.xl,
     },
-
-    backButton: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: '#F9FAFB',
+    headerContent: {
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
+    },
+    logoContainer: {
+        marginBottom: Spacing.lg,
+    },
+    logoIcon: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: Colors.secondary,
         justifyContent: 'center',
         alignItems: 'center',
+        ...Shadows.lg,
     },
-
-    headerTitle: {
-        color: '#1F2937',
-        fontSize: 18,
-        fontWeight: '600',
-        flex: 1,
+    logoIconText: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize['2xl'],
+        fontWeight: Typography.fontWeight.bold,
+        letterSpacing: 1,
+    },
+    appName: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize['2xl'],
+        fontWeight: Typography.fontWeight.extrabold,
+        marginBottom: Spacing.xs,
+        letterSpacing: 1,
+    },
+    malayalamText: {
+        color: Colors.secondary,
+        fontSize: Typography.fontSize['3xl'],
+        fontWeight: Typography.fontWeight.bold,
+        marginBottom: Spacing.sm,
         textAlign: 'center',
-        marginHorizontal: 16,
     },
-
-    spacer: {
-        width: 36,
+    tagline: {
+        color: Colors.textSecondary,
+        fontSize: Typography.fontSize.xs,
+        fontWeight: Typography.fontWeight.medium,
+        textAlign: 'center',
+        letterSpacing: 1,
+        opacity: 0.8,
     },
-
-    headerIcon: {
-        width: 20,
-        height: 20,
-        resizeMode: 'contain',
+    headerTitle: {
+        color: Colors.accent,
+        fontSize: Typography.fontSize.lg,
+        fontWeight: Typography.fontWeight.bold,
+        textAlign: 'center',
     },
-
     scrollView: {
         flex: 1,
     },
-
     scrollContent: {
-        padding: 20,
-        paddingBottom: 40,
+        paddingHorizontal: Layout.screenPadding,
+        paddingBottom: Spacing['6xl'],
     },
-
     section: {
-        marginBottom: 24,
+        marginBottom: Spacing.xl,
     },
-
     sectionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 16,
+        fontSize: Typography.fontSize.lg,
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.textPrimary,
+        marginBottom: Spacing.lg,
     },
-
     inputGroup: {
-        marginBottom: 16,
+        marginBottom: Spacing.lg,
     },
-
     label: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#6B7280',
-        marginBottom: 6,
+        fontSize: Typography.fontSize.base,
+        fontWeight: Typography.fontWeight.semibold,
+        color: Colors.textPrimary,
+        marginBottom: Spacing.sm,
     },
-
-    inputCompact: {
+    input: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 15,
-        color: '#1F2937',
-        backgroundColor: '#FFFFFF',
-        minHeight: 44,
+        borderColor: Colors.border,
+        color: Colors.textPrimary,
+        fontSize: Typography.fontSize.base,
+        ...Layout.inputPadding,
     },
-
     inputError: {
-        borderColor: '#EF4444',
-        backgroundColor: '#FEF2F2',
+        borderColor: Colors.error,
     },
-
-    textAreaCompact: {
+    textArea: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 15,
-        color: '#1F2937',
-        backgroundColor: '#FFFFFF',
-        height: 80,
-        textAlignVertical: 'top',
+        borderColor: Colors.border,
+        color: Colors.textPrimary,
+        fontSize: Typography.fontSize.base,
+        ...Layout.inputPadding,
+        minHeight: 80,
     },
-
     errorText: {
-        color: '#EF4444',
-        fontSize: 12,
-        marginTop: 4,
-        fontWeight: '500',
+        fontSize: Typography.fontSize.sm,
+        color: Colors.error,
+        marginTop: Spacing.xs,
     },
-
     characterCount: {
-        fontSize: 11,
-        color: '#9CA3AF',
+        fontSize: Typography.fontSize.xs,
+        color: Colors.textSecondary,
         textAlign: 'right',
-        marginTop: 4,
+        marginTop: Spacing.xs,
     },
-
     rowContainer: {
         flexDirection: 'row',
-        gap: 12,
+        justifyContent: 'space-between',
+        gap: Spacing.md,
     },
-
     halfWidth: {
         flex: 1,
     },
-
     categoryGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 10,
+        justifyContent: 'space-between',
+        gap: Spacing.md,
     },
-
     categoryCard: {
-        width: (width - 60) / 3, // 3 columns with proper spacing
-        aspectRatio: 1,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 12,
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: '#F3F4F6',
-    },
-
-    categoryCardSelected: {
-        backgroundColor: '#FAFAFA',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-    },
-
-    categoryIconWrapper: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-
-    categoryIconSmall: {
-        width: 16,
-        height: 16,
-        resizeMode: 'contain',
-    },
-
-    categoryLabel: {
-        fontSize: 12,
-        color: '#6B7280',
-        textAlign: 'center',
-        fontWeight: '500',
-    },
-
-    // Column-wise, centered containaer for priority & deadline
-    columnCenterContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 24,
-    },
-
-    priorityContainerColumn: {
-        width: '100%',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 12,
-    },
-
-    deadlineContainerColumn: {
-        width: '100%',
-        alignItems: 'center',
-    },
-
-    priorityChip: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F9FAFB',
-        borderRadius: 20,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
+        width: '30%',
         borderWidth: 1,
-        borderColor: '#E5E7EB',
-        minHeight: 36,
+        borderColor: Colors.border,
+        ...Shadows.sm,
     },
-
-    priorityChipSelected: {
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+    categoryCardSelected: {
+        backgroundColor: Colors.surfaceSecondary,
+        ...Shadows.md,
     },
-
-    priorityDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginRight: 8,
+    categoryIconWrapper: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: Spacing.sm,
     },
-
+    categoryIcon: {
+        fontSize: Typography.fontSize.lg,
+    },
+    categoryLabel: {
+        fontSize: Typography.fontSize.sm,
+        fontWeight: Typography.fontWeight.semibold,
+        color: Colors.textPrimary,
+        textAlign: 'center',
+    },
+    priorityContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: Spacing.md,
+    },
+    priorityCard: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
+        alignItems: 'center',
+        flex: 1,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        ...Shadows.sm,
+    },
+    priorityCardSelected: {
+        backgroundColor: Colors.surfaceSecondary,
+        ...Shadows.md,
+    },
+    priorityIcon: {
+        fontSize: Typography.fontSize.lg,
+        marginBottom: Spacing.sm,
+    },
     priorityLabel: {
-        fontSize: 13,
-        color: '#6B7280',
-        fontWeight: '500',
+        fontSize: Typography.fontSize.sm,
+        fontWeight: Typography.fontWeight.semibold,
+        color: Colors.textPrimary,
+        textAlign: 'center',
     },
-
+    dateButton: {
+        backgroundColor: Colors.surface,
+        borderRadius: BorderRadius.lg,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.md,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        ...Shadows.sm,
+    },
+    dateButtonText: {
+        fontSize: Typography.fontSize.base,
+        color: Colors.textPrimary,
+        fontWeight: Typography.fontWeight.medium,
+    },
+    dateButtonIcon: {
+        fontSize: Typography.fontSize.lg,
+    },
+    submitSection: {
+        marginTop: Spacing.xl,
+        alignItems: 'center',
+    },
     submitButton: {
-        backgroundColor: '#1F2937',
-        borderRadius: 12,
-        paddingVertical: 16,
+        backgroundColor: Colors.interactive,
+        borderRadius: BorderRadius.lg,
+        paddingVertical: Spacing.lg,
+        paddingHorizontal: Spacing['3xl'],
         alignItems: 'center',
-        marginTop: 8,
-        elevation: 2,
-        shadowColor: '#1F2937',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        marginBottom: Spacing.lg,
+        ...Shadows.md,
     },
-
+    submitButtonDisabled: {
+        backgroundColor: Colors.interactiveDisabled,
+    },
     submitButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#FFFFFF',
+        fontSize: Typography.fontSize.lg,
+        fontWeight: Typography.fontWeight.bold,
+        color: Colors.accent,
     },
-
-    draftLink: {
-        alignItems: 'center',
-        paddingVertical: 12,
-        marginTop: 8,
-    },
-
-    draftLinkText: {
-        fontSize: 14,
-        color: '#6B7280',
-        fontWeight: '500',
+    submitNote: {
+        fontSize: Typography.fontSize.sm,
+        color: Colors.textSecondary,
+        textAlign: 'center',
+        lineHeight: Typography.lineHeight.relaxed * Typography.fontSize.sm,
     },
 });
