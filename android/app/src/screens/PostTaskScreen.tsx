@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import {
     SafeAreaView,
     ScrollView,
@@ -17,8 +18,28 @@ const { width, height } = Dimensions.get('window');
 const isSmallScreen = width < 360;
 const isTablet = width > 768;
 
+type FormData = {
+    title: string;
+    description: string;
+    subject: string;
+    budget: string;
+    deadline: string;
+    category: string;
+    priority: string;
+};
+
+type FormErrors = {
+    title?: string;
+    description?: string;
+    subject?: string;
+    budget?: string;
+    deadline?: string;
+    category?: string;
+    priority?: string;
+};
+
 export default function PostTaskScreen() {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         title: '',
         description: '',
         subject: '',
@@ -30,62 +51,57 @@ export default function PostTaskScreen() {
 
     const [selectedCategory, setSelectedCategory] = useState('academic');
     const [selectedPriority, setSelectedPriority] = useState('normal');
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
-    // Improved categories with better icons and descriptions
+    // Simplified categories with minimal design
     const categories = [
         {
             id: 'academic',
-            label: 'Academic Help',
-            iconUri: 'https://img.icons8.com/ios-filled/22/4F46E5/school.png',
-            color: '#4F46E5',
-            description: 'Study materials, tutoring'
+            label: 'Academic',
+            iconUri: 'https://img.icons8.com/ios-filled/20/6366F1/school.png',
+            color: '#6366F1'
         },
         {
             id: 'assignment',
             label: 'Assignment',
-            iconUri: 'https://img.icons8.com/ios-filled/22/059669/assignment.png',
-            color: '#059669',
-            description: 'Homework, projects'
+            iconUri: 'https://img.icons8.com/ios-filled/20/10B981/assignment.png',
+            color: '#10B981'
         },
         {
             id: 'notes',
-            label: 'Notes & Research',
-            iconUri: 'https://img.icons8.com/ios-filled/22/DC2626/note.png',
-            color: '#DC2626',
-            description: 'Class notes, research help'
+            label: 'Notes',
+            iconUri: 'https://img.icons8.com/ios-filled/20/F59E0B/note.png',
+            color: '#F59E0B'
         },
         {
             id: 'practical',
-            label: 'Practical Work',
-            iconUri: 'https://img.icons8.com/ios-filled/22/7C2D92/building.png',
-            color: '#7C2D92',
-            description: 'Lab work, coding'
+            label: 'Practical',
+            iconUri: 'https://img.icons8.com/ios-filled/20/8B5CF6/building.png',
+            color: '#8B5CF6'
         },
         {
             id: 'delivery',
-            label: 'Campus Delivery',
-            iconUri: 'https://img.icons8.com/ios-filled/22/D97706/delivery.png',
-            color: '#D97706',
-            description: 'Food, books, supplies'
+            label: 'Delivery',
+            iconUri: 'https://img.icons8.com/ios-filled/20/F97316/delivery.png',
+            color: '#F97316'
         },
         {
             id: 'events',
-            label: 'Event Help',
-            iconUri: 'https://img.icons8.com/ios-filled/22/0891B2/event.png',
-            color: '#0891B2',
-            description: 'Photography, setup'
+            label: 'Events',
+            iconUri: 'https://img.icons8.com/ios-filled/20/06B6D4/event.png',
+            color: '#06B6D4'
         }
     ];
 
     const priorities = [
-        { id: 'low', label: 'Low Priority', color: '#059669' },
-        { id: 'normal', label: 'Normal', color: '#D97706' },
-        { id: 'high', label: 'Urgent', color: '#DC2626' }
+        { id: 'low', label: 'Low', color: '#10B981' },
+        { id: 'normal', label: 'Normal', color: '#F59E0B' },
+        { id: 'high', label: 'Urgent', color: '#EF4444' }
     ];
 
     const validateForm = () => {
-        const newErrors = {};
+        const newErrors: FormErrors = {};
 
         if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
@@ -126,32 +142,39 @@ export default function PostTaskScreen() {
         setErrors({});
     };
 
-    const updateFormData = (field, value) => {
+    const updateFormData = (field: keyof FormData, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
     };
 
+    const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            // Format date as DD/MM/YY
+            const day = selectedDate.getDate().toString().padStart(2, '0');
+            const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = selectedDate.getFullYear().toString().slice(-2);
+            const formatted = `${day}/${month}/${year}`;
+            updateFormData('deadline', formatted);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor="#2E3A59" barStyle="light-content" />
+            <StatusBar backgroundColor="#FAFAFA" barStyle="dark-content" />
 
-            {/* Light Header */}
+            {/* Minimal Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton} activeOpacity={0.7}>
                     <Image
-                        source={{ uri: 'https://img.icons8.com/ios-filled/24/2E3A59/left.png' }}
+                        source={{ uri: 'https://img.icons8.com/ios-glyphs/20/1F2937/left.png' }}
                         style={styles.headerIcon}
                     />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Post New Task</Text>
-                <TouchableOpacity style={styles.helpButton} activeOpacity={0.7}>
-                    <Image
-                        source={{ uri: 'https://img.icons8.com/ios-filled/24/2E3A59/help.png' }}
-                        style={styles.headerIcon}
-                    />
-                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Post Task</Text>
+                <View style={styles.spacer} />
             </View>
 
             <ScrollView
@@ -159,20 +182,14 @@ export default function PostTaskScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Task Information Card */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/edit.png' }}
-                            style={styles.cardHeaderIcon}
-                        />
-                        <Text style={styles.cardTitle}>Task Details</Text>
-                    </View>
-
+                {/* Task Information - Compact */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Task Details</Text>
+                    
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Task Title *</Text>
+                        <Text style={styles.label}>Title</Text>
                         <TextInput
-                            style={[styles.input, errors.title && styles.inputError]}
+                            style={[styles.inputCompact, errors.title && styles.inputError]}
                             placeholder="What do you need help with?"
                             placeholderTextColor="#9CA3AF"
                             value={formData.title}
@@ -180,122 +197,41 @@ export default function PostTaskScreen() {
                             maxLength={80}
                         />
                         {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
-                        <Text style={styles.characterCount}>{formData.title.length}/80</Text>
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Description *</Text>
+                        <Text style={styles.label}>Description</Text>
                         <TextInput
-                            style={[styles.textArea, errors.description && styles.inputError]}
-                            placeholder="Provide detailed information about your task..."
+                            style={[styles.textAreaCompact, errors.description && styles.inputError]}
+                            placeholder="Brief description of your task..."
                             placeholderTextColor="#9CA3AF"
                             value={formData.description}
                             onChangeText={(text) => updateFormData('description', text)}
                             multiline
-                            numberOfLines={4}
+                            numberOfLines={3}
                             textAlignVertical="top"
-                            maxLength={300}
+                            maxLength={200}
                         />
                         {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
-                        <Text style={styles.characterCount}>{formData.description.length}/300</Text>
-                    </View>
-
-                    <View style={[styles.inputGroup, styles.lastInputGroup]}>
-                        <Text style={styles.label}>Subject/Course</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="e.g., Mathematics, Computer Science"
-                            placeholderTextColor="#9CA3AF"
-                            value={formData.subject}
-                            onChangeText={(text) => updateFormData('subject', text)}
-                        />
-                    </View>
-                </View>
-
-                {/* Improved Category Selection Card */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/category.png' }}
-                            style={styles.cardHeaderIcon}
-                        />
-                        <Text style={styles.cardTitle}>Select Category</Text>
-                    </View>
-                    <Text style={styles.categorySubtitle}>Choose the type of task you need help with</Text>
-
-                    <View style={styles.categoryContainer}>
-                        {categories.map((category) => (
-                            <TouchableOpacity
-                                key={category.id}
-                                style={[
-                                    styles.categoryItem,
-                                    selectedCategory === category.id && [
-                                        styles.categoryItemSelected,
-                                        { borderLeftColor: category.color }
-                                    ]
-                                ]}
-                                onPress={() => {
-                                    setSelectedCategory(category.id);
-                                    updateFormData('category', category.id);
-                                }}
-                                activeOpacity={0.7}
-                            >
-                                <View style={styles.categoryContent}>
-                                    <View style={[
-                                        styles.categoryIconContainer,
-                                        { backgroundColor: category.color + '15' }
-                                    ]}>
-                                        <Image
-                                            source={{ uri: category.iconUri }}
-                                            style={styles.categoryIcon}
-                                        />
-                                    </View>
-
-                                    <View style={styles.categoryTextContainer}>
-                                        <Text style={[
-                                            styles.categoryTitle,
-                                            selectedCategory === category.id && styles.categoryTitleSelected
-                                        ]}>
-                                            {category.label}
-                                        </Text>
-                                        <Text style={styles.categoryDescription}>
-                                            {category.description}
-                                        </Text>
-                                    </View>
-                                </View>
-
-                                <View style={styles.categorySelector}>
-                                    {selectedCategory === category.id ? (
-                                        <View style={[styles.radioSelected, { backgroundColor: category.color }]}>
-                                            <Image
-                                                source={{ uri: 'https://img.icons8.com/ios-filled/14/ffffff/checkmark.png' }}
-                                                style={styles.checkIcon}
-                                            />
-                                        </View>
-                                    ) : (
-                                        <View style={styles.radioUnselected} />
-                                    )}
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Budget & Timeline Card */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/money.png' }}
-                            style={styles.cardHeaderIcon}
-                        />
-                        <Text style={styles.cardTitle}>Budget & Timeline</Text>
+                        <Text style={styles.characterCount}>{formData.description.length}/200</Text>
                     </View>
 
                     <View style={styles.rowContainer}>
                         <View style={styles.halfWidth}>
-                            <Text style={styles.label}>Budget (₹) *</Text>
+                            <Text style={styles.label}>Subject</Text>
                             <TextInput
-                                style={[styles.input, errors.budget && styles.inputError]}
+                                style={styles.inputCompact}
+                                placeholder="e.g., Math"
+                                placeholderTextColor="#9CA3AF"
+                                value={formData.subject}
+                                onChangeText={(text) => updateFormData('subject', text)}
+                            />
+                        </View>
+
+                        <View style={styles.halfWidth}>
+                            <Text style={styles.label}>Budget (₹)</Text>
+                            <TextInput
+                                style={[styles.inputCompact, errors.budget && styles.inputError]}
                                 placeholder="Amount"
                                 placeholderTextColor="#9CA3AF"
                                 value={formData.budget}
@@ -304,88 +240,128 @@ export default function PostTaskScreen() {
                             />
                             {errors.budget && <Text style={styles.errorText}>{errors.budget}</Text>}
                         </View>
-
-                        <View style={styles.halfWidth}>
-                            <Text style={styles.label}>Deadline</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="DD/MM/YYYY"
-                                placeholderTextColor="#9CA3AF"
-                                value={formData.deadline}
-                                onChangeText={(text) => updateFormData('deadline', text)}
-                            />
-                        </View>
                     </View>
                 </View>
 
-                {/* Priority Selection Card */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/20/2E3A59/high-priority.png' }}
-                            style={styles.cardHeaderIcon}
-                        />
-                        <Text style={styles.cardTitle}>Priority Level</Text>
-                    </View>
-
-                    <View style={styles.priorityContainer}>
-                        {priorities.map((priority) => (
+                {/* Category Selection - Minimal Grid */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Category</Text>
+                    
+                    <View style={styles.categoryGrid}>
+                        {categories.map((category) => (
                             <TouchableOpacity
-                                key={priority.id}
+                                key={category.id}
                                 style={[
-                                    styles.priorityOption,
-                                    selectedPriority === priority.id && styles.prioritySelected
+                                    styles.categoryCard,
+                                    selectedCategory === category.id && [
+                                        styles.categoryCardSelected,
+                                        { borderColor: category.color }
+                                    ]
                                 ]}
                                 onPress={() => {
-                                    setSelectedPriority(priority.id);
-                                    updateFormData('priority', priority.id);
+                                    setSelectedCategory(category.id);
+                                    updateFormData('category', category.id);
                                 }}
                                 activeOpacity={0.7}
                             >
-                                <View style={[styles.priorityDot, { backgroundColor: priority.color }]} />
-                                <Text style={[
-                                    styles.priorityText,
-                                    selectedPriority === priority.id && styles.priorityTextSelected
+                                <View style={[
+                                    styles.categoryIconWrapper,
+                                    { backgroundColor: selectedCategory === category.id ? category.color : '#F3F4F6' }
                                 ]}>
-                                    {priority.label}
-                                </Text>
-                                {selectedPriority === priority.id && (
                                     <Image
-                                        source={{ uri: 'https://img.icons8.com/ios-filled/20/' + priority.color.slice(1) + '/checkmark.png' }}
-                                        style={styles.priorityCheckIcon}
+                                        source={{ 
+                                            uri: selectedCategory === category.id ? 
+                                                category.iconUri.replace(category.color.slice(1), 'FFFFFF') : 
+                                                category.iconUri.replace(category.color.slice(1), '9CA3AF')
+                                        }}
+                                        style={styles.categoryIconSmall}
                                     />
-                                )}
+                                </View>
+                                <Text style={[
+                                    styles.categoryLabel,
+                                    selectedCategory === category.id && { color: category.color, fontWeight: '600' }
+                                ]}>
+                                    {category.label}
+                                </Text>
                             </TouchableOpacity>
                         ))}
                     </View>
                 </View>
 
-                {/* Action Buttons */}
-                <View style={styles.actionContainer}>
-                    <TouchableOpacity
-                        style={styles.draftButton}
-                        activeOpacity={0.8}
-                        onPress={resetForm}
-                    >
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/18/6B7280/save--v1.png' }}
-                            style={styles.actionButtonIcon}
-                        />
-                        <Text style={styles.draftButtonText}>Save Draft</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.submitButton}
-                        activeOpacity={0.8}
-                        onPress={handleSubmit}
-                    >
-                        <Image
-                            source={{ uri: 'https://img.icons8.com/ios-filled/18/FFFFFF/send.png' }}
-                            style={styles.actionButtonIcon}
-                        />
-                        <Text style={styles.submitButtonText}>Post Task</Text>
-                    </TouchableOpacity>
+                {/* Priority & Deadline - Column, Centered, with Date Picker */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Priority & Deadline</Text>
+                    <View style={styles.columnCenterContainer}>
+                        <View style={styles.priorityContainerColumn}>
+                            {priorities.map((priority) => (
+                                <TouchableOpacity
+                                    key={priority.id}
+                                    style={[
+                                        styles.priorityChip,
+                                        selectedPriority === priority.id && [
+                                            styles.priorityChipSelected,
+                                            { backgroundColor: priority.color + '15', borderColor: priority.color }
+                                        ]
+                                    ]}
+                                    onPress={() => {
+                                        setSelectedPriority(priority.id);
+                                        updateFormData('priority', priority.id);
+                                    }}
+                                    activeOpacity={0.7}
+                                >
+                                    <View style={[styles.priorityDot, { backgroundColor: priority.color }]} />
+                                    <Text style={[
+                                        styles.priorityLabel,
+                                        selectedPriority === priority.id && { 
+                                            color: priority.color,
+                                            fontWeight: '600'
+                                        }
+                                    ]}>
+                                        {priority.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        <View style={styles.deadlineContainerColumn}>
+                            <Text style={styles.label}>Deadline</Text>
+                            <TouchableOpacity
+                                style={[styles.inputCompact, { justifyContent: 'center' }]}
+                                onPress={() => setShowDatePicker(true)}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={{ color: formData.deadline ? '#1F2937' : '#9CA3AF', fontSize: 15 }}>
+                                    {formData.deadline || 'Select date'}
+                                </Text>
+                            </TouchableOpacity>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={formData.deadline ? new Date(`20${formData.deadline.split('/')[2]}/${formData.deadline.split('/')[1]}/${formData.deadline.split('/')[0]}`) : new Date()}
+                                    mode="date"
+                                    display="default"
+                                    onChange={handleDateChange}
+                                />
+                            )}
+                        </View>
+                    </View>
                 </View>
+
+                {/* Action Button - Single CTA */}
+                <TouchableOpacity
+                    style={styles.submitButton}
+                    activeOpacity={0.8}
+                    onPress={handleSubmit}
+                >
+                    <Text style={styles.submitButtonText}>Post Task</Text>
+                </TouchableOpacity>
+
+                {/* Save Draft - Minimal Link */}
+                <TouchableOpacity
+                    style={styles.draftLink}
+                    activeOpacity={0.7}
+                    onPress={resetForm}
+                >
+                    <Text style={styles.draftLinkText}>Save as Draft</Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );
@@ -394,56 +370,45 @@ export default function PostTaskScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F6FA',
+        backgroundColor: '#FAFAFA',
     },
 
     header: {
         backgroundColor: '#FFFFFF',
-        paddingTop: 16,
-        paddingBottom: 16,
+        paddingTop: 12,
+        paddingBottom: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        paddingHorizontal: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: '#F3F4F6',
     },
 
     backButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    helpButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#F3F4F6',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#F9FAFB',
         justifyContent: 'center',
         alignItems: 'center',
     },
 
     headerTitle: {
         color: '#1F2937',
-        fontSize: isTablet ? 22 : 20,
-        fontWeight: '700',
+        fontSize: 18,
+        fontWeight: '600',
         flex: 1,
         textAlign: 'center',
         marginHorizontal: 16,
     },
 
+    spacer: {
+        width: 36,
+    },
+
     headerIcon: {
-        width: 24,
-        height: 24,
+        width: 20,
+        height: 20,
         resizeMode: 'contain',
     },
 
@@ -452,68 +417,41 @@ const styles = StyleSheet.create({
     },
 
     scrollContent: {
-        padding: isTablet ? 24 : 16,
-        paddingBottom: 32,
+        padding: 20,
+        paddingBottom: 40,
     },
 
-    card: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        padding: isTablet ? 24 : 20,
-        marginBottom: 16,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
+    section: {
+        marginBottom: 24,
     },
 
-    cardHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-
-    cardHeaderIcon: {
-        width: 20,
-        height: 20,
-        resizeMode: 'contain',
-        tintColor: '#2E3A59',
-    },
-
-    cardTitle: {
-        fontSize: isTablet ? 20 : 18,
-        fontWeight: '700',
-        color: '#1F2937',
-        marginLeft: 10,
-    },
-
-    inputGroup: {
-        marginBottom: 20,
-    },
-
-    lastInputGroup: {
-        marginBottom: 0,
-    },
-
-    label: {
+    sectionTitle: {
         fontSize: 16,
         fontWeight: '600',
         color: '#374151',
-        marginBottom: 8,
+        marginBottom: 16,
     },
 
-    input: {
+    inputGroup: {
+        marginBottom: 16,
+    },
+
+    label: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6B7280',
+        marginBottom: 6,
+    },
+
+    inputCompact: {
         borderWidth: 1,
-        borderColor: '#D1D5DB',
-        borderRadius: 12,
-        padding: 16,
-        fontSize: 16,
+        borderColor: '#E5E7EB',
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 15,
         color: '#1F2937',
-        backgroundColor: '#FAFAFA',
-        minHeight: 52,
+        backgroundColor: '#FFFFFF',
+        minHeight: 44,
     },
 
     inputError: {
@@ -521,137 +459,34 @@ const styles = StyleSheet.create({
         backgroundColor: '#FEF2F2',
     },
 
-    textArea: {
+    textAreaCompact: {
         borderWidth: 1,
-        borderColor: '#D1D5DB',
-        borderRadius: 12,
-        padding: 16,
-        fontSize: 16,
+        borderColor: '#E5E7EB',
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 15,
         color: '#1F2937',
-        backgroundColor: '#FAFAFA',
-        height: isSmallScreen ? 100 : 120,
+        backgroundColor: '#FFFFFF',
+        height: 80,
         textAlignVertical: 'top',
     },
 
     errorText: {
         color: '#EF4444',
         fontSize: 12,
-        marginTop: 6,
+        marginTop: 4,
         fontWeight: '500',
     },
 
     characterCount: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#9CA3AF',
         textAlign: 'right',
         marginTop: 4,
     },
 
-    categorySubtitle: {
-        fontSize: 14,
-        color: '#6B7280',
-        marginBottom: 16,
-        marginTop: -12,
-    },
-
-    categoryContainer: {
-        gap: 12,
-    },
-
-    categoryItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FAFAFA',
-        borderRadius: 14,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderLeftWidth: 4,
-        borderLeftColor: 'transparent',
-    },
-
-    categoryItemSelected: {
-        backgroundColor: '#F8FAFF',
-        borderColor: '#E0E7FF',
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-    },
-
-    categoryContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-    },
-
-    categoryIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-
-    categoryIcon: {
-        width: 22,
-        height: 22,
-        resizeMode: 'contain',
-    },
-
-    categoryTextContainer: {
-        flex: 1,
-    },
-
-    categoryTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#374151',
-        marginBottom: 2,
-    },
-
-    categoryTitleSelected: {
-        color: '#1F2937',
-    },
-
-    categoryDescription: {
-        fontSize: 13,
-        color: '#9CA3AF',
-        lineHeight: 18,
-    },
-
-    categorySelector: {
-        marginLeft: 12,
-    },
-
-    radioSelected: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    radioUnselected: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        borderWidth: 2,
-        borderColor: '#D1D5DB',
-        backgroundColor: '#FFFFFF',
-    },
-
-    checkIcon: {
-        width: 14,
-        height: 14,
-        resizeMode: 'contain',
-    },
-
     rowContainer: {
-        flexDirection: isTablet ? 'row' : 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'row',
         gap: 12,
     },
 
@@ -659,103 +494,136 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-    priorityContainer: {
-        gap: 12,
-    },
-
-    priorityOption: {
+    categoryGrid: {
         flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F9FAFB',
+        flexWrap: 'wrap',
+        gap: 10,
+    },
+
+    categoryCard: {
+        width: (width - 60) / 3, // 3 columns with proper spacing
+        aspectRatio: 1,
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
-        padding: 16,
+        padding: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
         borderWidth: 2,
-        borderColor: 'transparent',
-        minHeight: 56,
+        borderColor: '#F3F4F6',
     },
 
-    prioritySelected: {
-        backgroundColor: '#EEF2FF',
-        borderColor: '#4F46E5',
+    categoryCardSelected: {
+        backgroundColor: '#FAFAFA',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
     },
 
-    priorityDot: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        marginRight: 12,
+    categoryIconWrapper: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8,
     },
 
-    priorityText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#6B7280',
-        flex: 1,
-    },
-
-    priorityTextSelected: {
-        color: '#1F2937',
-    },
-
-    priorityCheckIcon: {
-        width: 20,
-        height: 20,
+    categoryIconSmall: {
+        width: 16,
+        height: 16,
         resizeMode: 'contain',
     },
 
-    actionContainer: {
-        flexDirection: isSmallScreen ? 'column' : 'row',
-        gap: 12,
-        marginTop: 8,
-    },
-
-    draftButton: {
-        flex: isSmallScreen ? undefined : 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        paddingVertical: 16,
-        borderWidth: 1,
-        borderColor: '#D1D5DB',
-        elevation: 1,
-        minHeight: 52,
-    },
-
-    draftButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
+    categoryLabel: {
+        fontSize: 12,
         color: '#6B7280',
-        marginLeft: 8,
+        textAlign: 'center',
+        fontWeight: '500',
+    },
+
+    // Column-wise, centered containaer for priority & deadline
+    columnCenterContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 24,
+    },
+
+    priorityContainerColumn: {
+        width: '100%',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 12,
+    },
+
+    deadlineContainerColumn: {
+        width: '100%',
+        alignItems: 'center',
+    },
+
+    priorityChip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F9FAFB',
+        borderRadius: 20,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        minHeight: 36,
+    },
+
+    priorityChipSelected: {
+        elevation: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+    },
+
+    priorityDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginRight: 8,
+    },
+
+    priorityLabel: {
+        fontSize: 13,
+        color: '#6B7280',
+        fontWeight: '500',
     },
 
     submitButton: {
-        flex: isSmallScreen ? undefined : 2,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#2E3A59',
+        backgroundColor: '#1F2937',
         borderRadius: 12,
         paddingVertical: 16,
-        elevation: 3,
-        shadowColor: '#2E3A59',
+        alignItems: 'center',
+        marginTop: 8,
+        elevation: 2,
+        shadowColor: '#1F2937',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 4,
-        minHeight: 52,
     },
 
     submitButtonText: {
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '600',
         color: '#FFFFFF',
-        marginLeft: 8,
     },
 
-    actionButtonIcon: {
-        width: 18,
-        height: 18,
-        resizeMode: 'contain',
+    draftLink: {
+        alignItems: 'center',
+        paddingVertical: 12,
+        marginTop: 8,
+    },
+
+    draftLinkText: {
+        fontSize: 14,
+        color: '#6B7280',
+        fontWeight: '500',
     },
 });
