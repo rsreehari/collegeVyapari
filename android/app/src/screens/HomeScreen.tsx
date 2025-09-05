@@ -10,15 +10,19 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  Animated,
 } from 'react-native';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
 const { width } = Dimensions.get('window');
 
 const CATEGORIES = [
-  { id: 'academic', label: 'Academic', iconUri: 'https://img.icons8.com/ios-filled/40/4F46E5/school.png' },
-  { id: 'delivery', label: 'Delivery', iconUri: 'https://img.icons8.com/ios-filled/40/D97706/delivery-dining.png' },
-  { id: 'events', label: 'Events', iconUri: 'https://img.icons8.com/ios-filled/40/0891B2/event.png' },
-  { id: 'practical', label: 'Practical', iconUri: 'https://img.icons8.com/ios-filled/40/7C2D92/tools.png' },
+  { id: 'academic', label: 'Academic', icon: '📚', color: Colors.interactive },
+  { id: 'delivery', label: 'Delivery', icon: '🚚', color: Colors.warning },
+  { id: 'events', label: 'Events', icon: '🎉', color: Colors.info },
+  { id: 'practical', label: 'Practical', icon: '🔧', color: Colors.success },
+  { id: 'tutoring', label: 'Tutoring', icon: '👨‍🏫', color: '#8B5CF6' },
+  { id: 'research', label: 'Research', icon: '🔬', color: '#EF4444' },
 ];
 
 const FEATURED_TASKS = [
@@ -34,6 +38,25 @@ const RECENT_TASKS = [
 export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState('academic');
   const [searchText, setSearchText] = useState('');
+  const [focusedInput, setFocusedInput] = useState(false);
+
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(30)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // Filter recent tasks by searchText or category
   const filteredRecentTasks = RECENT_TASKS.filter(task =>
@@ -42,185 +65,459 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header */}
-        <Text style={styles.appTitle}>College Vyapari</Text>
-        <Text style={styles.tagLine}>"Where students meets hustles"</Text>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search tasks or helpers..."
-            placeholderTextColor="#9CA3AF"
-            value={searchText}
-            onChangeText={setSearchText}
-          />
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <Animated.View 
+        style={[
+          styles.header,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoIcon}>
+              <Text style={styles.logoIconText}>CV</Text>
+            </View>
+          </View>
+          <Text style={styles.appName}>College</Text>
+          <Text style={styles.malayalamText}>വ്യാപാരി</Text>
+          <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
         </View>
+      </Animated.View>
+
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Search Bar */}
+        <Animated.View 
+          style={[
+            styles.searchContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <View style={styles.searchInputContainer}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={[
+                styles.searchInput,
+                focusedInput && styles.searchInputFocused
+              ]}
+              placeholder="Search tasks or helpers..."
+              placeholderTextColor={Colors.textTertiary}
+              value={searchText}
+              onChangeText={setSearchText}
+              onFocus={() => setFocusedInput(true)}
+              onBlur={() => setFocusedInput(false)}
+            />
+          </View>
+        </Animated.View>
 
         {/* Categories */}
-        <View style={styles.categoriesContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Animated.View 
+          style={[
+            styles.categoriesContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>Categories</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
             {CATEGORIES.map(cat => (
               <TouchableOpacity
                 key={cat.id}
                 style={[
-                  styles.categoryBadge,
-                  selectedCategory === cat.id && styles.categoryBadgeActive,
+                  styles.categoryCard,
+                  selectedCategory === cat.id && styles.categoryCardActive,
+                  { borderColor: selectedCategory === cat.id ? cat.color : Colors.border }
                 ]}
                 onPress={() => setSelectedCategory(cat.id)}
               >
-                <Image source={{ uri: cat.iconUri }} style={styles.categoryIcon} />
-                <Text
-                  style={[
-                    styles.categoryLabel,
-                    selectedCategory === cat.id && styles.categoryLabelActive,
-                  ]}
-                >
+                <Text style={styles.categoryIcon}>{cat.icon}</Text>
+                <Text style={[
+                  styles.categoryLabel,
+                  selectedCategory === cat.id && styles.categoryLabelActive,
+                  { color: selectedCategory === cat.id ? cat.color : Colors.textPrimary }
+                ]}>
                   {cat.label}
                 </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </Animated.View>
 
         {/* Featured Tasks */}
-        <Text style={styles.sectionHeader}>Featured Tasks</Text>
-        <FlatList
-          horizontal
-          data={FEATURED_TASKS}
-          keyExtractor={(item) => item.id}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.featuredCard}>
-              <Text style={styles.featuredTitle}>{item.title}</Text>
-              <Text style={styles.featuredBudget}>₹{item.budget}</Text>
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{ paddingLeft: 20, paddingBottom: 10 }}
-        />
+        <Animated.View 
+          style={[
+            styles.featuredSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>Featured Tasks</Text>
+          <FlatList
+            horizontal
+            data={FEATURED_TASKS}
+            keyExtractor={(item) => item.id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.featuredCard}>
+                <View style={styles.featuredCardHeader}>
+                  <Text style={styles.featuredCategory}>{item.category}</Text>
+                  <Text style={styles.featuredUrgent}>🔥</Text>
+                </View>
+                <Text style={styles.featuredTitle}>{item.title}</Text>
+                <Text style={styles.featuredBudget}>₹{item.budget}</Text>
+                <View style={styles.featuredFooter}>
+                  <Text style={styles.featuredTime}>2 hours ago</Text>
+                  <Text style={styles.featuredApplicants}>12 applicants</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.featuredListContent}
+          />
+        </Animated.View>
 
         {/* Recent Tasks */}
-        <Text style={styles.sectionHeader}>Recent Tasks</Text>
-        <FlatList
-          data={filteredRecentTasks}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.taskCard}>
+        <Animated.View 
+          style={[
+            styles.recentSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>Recent Tasks</Text>
+          {filteredRecentTasks.map((item) => (
+            <TouchableOpacity key={item.id} style={styles.taskCard}>
+              <View style={styles.taskCardHeader}>
+                <View style={styles.taskCategoryBadge}>
+                  <Text style={styles.taskCategoryText}>{item.category}</Text>
+                </View>
+                {item.urgent && (
+                  <View style={styles.urgentBadge}>
+                    <Text style={styles.urgentText}>URGENT</Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.taskTitle}>{item.title}</Text>
-              <Text style={styles.taskBudget}>
-                ₹{item.budget} {item.urgent ? '(Urgent)' : ''}
-              </Text>
+              <View style={styles.taskFooter}>
+                <Text style={styles.taskBudget}>₹{item.budget}</Text>
+                <Text style={styles.taskTime}>2 hours ago</Text>
+              </View>
             </TouchableOpacity>
-          )}
-          contentContainerStyle={{ paddingBottom: 100 }}
-        />
-      </View>
+          ))}
+        </Animated.View>
+
+        {/* Quick Actions */}
+        <Animated.View 
+          style={[
+            styles.quickActionsSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.quickActionsGrid}>
+            <TouchableOpacity style={styles.quickActionCard}>
+              <Text style={styles.quickActionIcon}>📝</Text>
+              <Text style={styles.quickActionText}>Post Task</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionCard}>
+              <Text style={styles.quickActionIcon}>💰</Text>
+              <Text style={styles.quickActionText}>My Wallet</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionCard}>
+              <Text style={styles.quickActionIcon}>🏆</Text>
+              <Text style={styles.quickActionText}>Leaderboard</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionCard}>
+              <Text style={styles.quickActionIcon}>📊</Text>
+              <Text style={styles.quickActionText}>My Tasks</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#2563EB' },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    backgroundColor: Colors.background,
   },
-  appTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#111827',
-    textAlign: 'center',
-    marginBottom: 4,
+  header: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing['3xl'],
+    paddingHorizontal: Layout.screenPadding,
+    borderBottomLeftRadius: BorderRadius['3xl'],
+    borderBottomRightRadius: BorderRadius['3xl'],
+    marginBottom: Spacing.xl,
   },
-  tagLine: {
-    fontSize: 12,
-    color: '#374151',
-    fontStyle: 'italic',
+  headerContent: {
+    alignItems: 'center',
+  },
+  logoContainer: {
+    marginBottom: Spacing.lg,
+  },
+  logoIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  logoIconText: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
+  },
+  appName: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.extrabold,
+    marginBottom: Spacing.xs,
+    letterSpacing: 1,
+  },
+  malayalamText: {
+    color: Colors.secondary,
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.bold,
+    marginBottom: Spacing.sm,
     textAlign: 'center',
-    marginBottom: 12,
+  },
+  tagline: {
+    color: Colors.textSecondary,
+    fontSize: Typography.fontSize.xs,
+    fontWeight: Typography.fontWeight.medium,
+    textAlign: 'center',
+    letterSpacing: 1,
+    opacity: 0.8,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: Layout.screenPadding,
   },
   searchContainer: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    marginBottom: Spacing.xl,
   },
-  searchInput: {
-    fontSize: 16,
-    color: '#111827',
-  },
-  categoriesContainer: {
-    marginBottom: 20,
-  },
-  categoryBadge: {
+  searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E0E7FF',
-    borderRadius: 24,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.sm,
   },
-  categoryBadgeActive: {
-    backgroundColor: '#2563EB',
+  searchIcon: {
+    fontSize: Typography.fontSize.lg,
+    marginRight: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: Typography.fontSize.base,
+    color: Colors.textPrimary,
+  },
+  searchInputFocused: {
+    borderColor: Colors.borderFocus,
+  },
+  categoriesContainer: {
+    marginBottom: Spacing.xl,
+  },
+  sectionTitle: {
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.md,
+  },
+  categoriesScroll: {
+    marginBottom: Spacing.sm,
+  },
+  categoryCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginRight: Spacing.md,
+    alignItems: 'center',
+    minWidth: 80,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.sm,
+  },
+  categoryCardActive: {
+    backgroundColor: Colors.surfaceSecondary,
+    ...Shadows.md,
   },
   categoryIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
+    fontSize: Typography.fontSize['2xl'],
+    marginBottom: Spacing.sm,
   },
   categoryLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1E3A8A',
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.semibold,
+    textAlign: 'center',
   },
   categoryLabelActive: {
-    color: '#fff',
+    fontWeight: Typography.fontWeight.bold,
   },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#111827',
+  featuredSection: {
+    marginBottom: Spacing.xl,
+  },
+  featuredListContent: {
+    paddingLeft: 0,
   },
   featuredCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 16,
-    padding: 20,
-    marginRight: 16,
-    width: width * 0.6,
-    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginRight: Spacing.md,
+    width: width * 0.7,
+    ...Shadows.md,
+  },
+  featuredCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  featuredCategory: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.interactive,
+    fontWeight: Typography.fontWeight.semibold,
+    backgroundColor: Colors.surfaceSecondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  featuredUrgent: {
+    fontSize: Typography.fontSize.sm,
   },
   featuredTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 8,
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.sm,
   },
   featuredBudget: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#BBF7D0',
+    fontSize: Typography.fontSize.xl,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.success,
+    marginBottom: Spacing.md,
+  },
+  featuredFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  featuredTime: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+  },
+  featuredApplicants: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.interactive,
+    fontWeight: Typography.fontWeight.medium,
+  },
+  recentSection: {
+    marginBottom: Spacing.xl,
   },
   taskCard: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    ...Shadows.sm,
+  },
+  taskCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  taskCategoryBadge: {
+    backgroundColor: Colors.interactive,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  taskCategoryText: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.accent,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  urgentBadge: {
+    backgroundColor: Colors.error,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  urgentText: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.accent,
+    fontWeight: Typography.fontWeight.bold,
   },
   taskTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1E293B',
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.sm,
+  },
+  taskFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   taskBudget: {
-    fontSize: 14,
-    color: '#10B981',
-    marginTop: 4,
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.success,
+  },
+  taskTime: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+  },
+  quickActionsSection: {
+    marginBottom: Spacing['6xl'],
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  quickActionCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    width: '48%',
+    marginBottom: Spacing.md,
+    alignItems: 'center',
+    ...Shadows.sm,
+  },
+  quickActionIcon: {
+    fontSize: Typography.fontSize['2xl'],
+    marginBottom: Spacing.sm,
+  },
+  quickActionText: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textPrimary,
+    fontWeight: Typography.fontWeight.medium,
+    textAlign: 'center',
   },
 });

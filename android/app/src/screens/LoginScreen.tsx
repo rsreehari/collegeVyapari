@@ -12,14 +12,35 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Animated,
 } from 'react-native';
 import { useUser } from '../context/UserContext';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const { login } = useUser();
+
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(30)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -44,7 +65,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#4F46E5" barStyle="light-content" />
+      <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
       
       <KeyboardAvoidingView 
         style={styles.keyboardView}
@@ -52,27 +73,51 @@ export default function LoginScreen() {
       >
         <ScrollView contentContainerStyle={styles.content}>
           {/* Header */}
-          <View style={styles.header}>
-            <Image
-              source={{ uri: 'https://img.icons8.com/ios-filled/80/FFFFFF/school.png' }}
-              style={styles.logo}
-            />
-            <Text style={styles.appName}>College Vyapari</Text>
-            <Text style={styles.tagline}>Where students meet hustles</Text>
-          </View>
+          <Animated.View 
+            style={[
+              styles.header,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
+            <View style={styles.logoContainer}>
+              <View style={styles.logoIcon}>
+                <Text style={styles.logoIconText}>CV</Text>
+              </View>
+            </View>
+            <Text style={styles.appName}>College</Text>
+            <Text style={styles.malayalamText}>വ്യാപാരി</Text>
+            <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
+          </Animated.View>
 
           {/* Form */}
-          <View style={styles.formContainer}>
+          <Animated.View 
+            style={[
+              styles.formContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
             <Text style={styles.formTitle}>Welcome Back!</Text>
             <Text style={styles.formSubtitle}>Sign in to continue your hustle journey</Text>
 
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Email</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  focusedInput === 'email' && styles.inputFocused
+                ]}
                 placeholder="Enter your email"
+                placeholderTextColor={Colors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
+                onFocus={() => setFocusedInput('email')}
+                onBlur={() => setFocusedInput(null)}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -82,10 +127,16 @@ export default function LoginScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Password</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  focusedInput === 'password' && styles.inputFocused
+                ]}
                 placeholder="Enter your password"
+                placeholderTextColor={Colors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
+                onFocus={() => setFocusedInput('password')}
+                onBlur={() => setFocusedInput(null)}
                 secureTextEntry
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -118,32 +169,37 @@ export default function LoginScreen() {
             <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
               <Text style={styles.signupButtonText}>Create New Account</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
           {/* Features */}
-          <View style={styles.featuresContainer}>
+          <Animated.View 
+            style={[
+              styles.featuresContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
             <View style={styles.featureItem}>
-              <Image
-                source={{ uri: 'https://img.icons8.com/ios-filled/20/10B981/checkmark.png' }}
-                style={styles.featureIcon}
-              />
+              <View style={styles.featureIconContainer}>
+                <Text style={styles.featureIcon}>🔒</Text>
+              </View>
               <Text style={styles.featureText}>Secure</Text>
             </View>
             <View style={styles.featureItem}>
-              <Image
-                source={{ uri: 'https://img.icons8.com/ios-filled/20/10B981/checkmark.png' }}
-                style={styles.featureIcon}
-              />
+              <View style={styles.featureIconContainer}>
+                <Text style={styles.featureIcon}>✅</Text>
+              </View>
               <Text style={styles.featureText}>Verified</Text>
             </View>
             <View style={styles.featureItem}>
-              <Image
-                source={{ uri: 'https://img.icons8.com/ios-filled/20/10B981/checkmark.png' }}
-                style={styles.featureIcon}
-              />
+              <View style={styles.featureIconContainer}>
+                <Text style={styles.featureIcon}>🤝</Text>
+              </View>
               <Text style={styles.featureText}>Trusted</Text>
             </View>
-          </View>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -153,146 +209,182 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: Colors.background,
   },
   keyboardView: {
     flex: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Layout.screenPadding,
   },
   header: {
-    backgroundColor: '#4F46E5',
-    paddingVertical: 40,
-    paddingHorizontal: 24,
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing['4xl'],
+    paddingHorizontal: Layout.screenPadding,
     alignItems: 'center',
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    borderBottomLeftRadius: BorderRadius['3xl'],
+    borderBottomRightRadius: BorderRadius['3xl'],
+    marginBottom: Spacing['2xl'],
   },
-  logo: {
+  logoContainer: {
+    marginBottom: Spacing.xl,
+  },
+  logoIcon: {
     width: 80,
     height: 80,
-    marginBottom: 16,
+    borderRadius: 40,
+    backgroundColor: Colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  logoIconText: {
+    color: Colors.accent,
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 2,
   },
   appName: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 8,
+    color: Colors.accent,
+    fontSize: Typography.fontSize['3xl'],
+    fontWeight: Typography.fontWeight.extrabold,
+    marginBottom: Spacing.sm,
+    letterSpacing: 1,
+  },
+  malayalamText: {
+    color: Colors.secondary,
+    fontSize: Typography.fontSize['4xl'],
+    fontWeight: Typography.fontWeight.bold,
+    marginBottom: Spacing.md,
+    textAlign: 'center',
   },
   tagline: {
-    fontSize: 16,
-    color: '#E0E7FF',
+    color: Colors.textSecondary,
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.medium,
     textAlign: 'center',
+    letterSpacing: 2,
+    opacity: 0.8,
   },
   formContainer: {
     flex: 1,
-    paddingTop: 32,
+    paddingTop: Spacing['2xl'],
   },
   formTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: 8,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   formSubtitle: {
-    fontSize: 16,
-    color: '#6B7280',
+    fontSize: Typography.fontSize.base,
+    color: Colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: Spacing['3xl'],
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.sm,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    color: '#1F2937',
+    borderColor: Colors.border,
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.base,
+    ...Layout.inputPadding,
+  },
+  inputFocused: {
+    borderColor: Colors.borderFocus,
+    ...Shadows.sm,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginBottom: Spacing['2xl'],
   },
   forgotPasswordText: {
-    fontSize: 14,
-    color: '#4F46E5',
-    fontWeight: '600',
+    fontSize: Typography.fontSize.sm,
+    color: Colors.interactive,
+    fontWeight: Typography.fontWeight.semibold,
   },
   loginButton: {
-    backgroundColor: '#4F46E5',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.interactive,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: Spacing['2xl'],
+    ...Shadows.md,
   },
   loginButtonDisabled: {
-    backgroundColor: '#9CA3AF',
+    backgroundColor: Colors.interactiveDisabled,
   },
   loginButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.accent,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: Spacing['2xl'],
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: Colors.border,
   },
   dividerText: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginHorizontal: 16,
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    marginHorizontal: Spacing.lg,
   },
   signupButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#4F46E5',
-    marginBottom: 32,
+    borderColor: Colors.interactive,
+    marginBottom: Spacing['3xl'],
   },
   signupButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4F46E5',
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.interactive,
   },
   featuresContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingBottom: 20,
+    paddingBottom: Spacing.xl,
   },
   featureItem: {
     alignItems: 'center',
     flex: 1,
   },
+  featureIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.surfaceSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
   featureIcon: {
-    width: 20,
-    height: 20,
-    marginBottom: 8,
+    fontSize: Typography.fontSize.lg,
   },
   featureText: {
-    fontSize: 12,
-    color: '#6B7280',
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: Typography.fontWeight.medium,
   },
 });
