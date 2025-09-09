@@ -17,6 +17,7 @@ import {
 import { useUser } from '../context/UserContext';
 import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
 
+
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,8 +25,10 @@ export default function LoginScreen() {
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const { login } = useUser();
 
+
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(30)).current;
+
 
   React.useEffect(() => {
     Animated.parallel([
@@ -42,11 +45,13 @@ export default function LoginScreen() {
     ]).start();
   }, []);
 
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
+
 
     setIsLoading(true);
     try {
@@ -58,10 +63,12 @@ export default function LoginScreen() {
     }
   };
 
+
   const handleSignup = () => {
     // Navigate to signup screen
     Alert.alert('Sign Up', 'Sign up functionality will be implemented');
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,9 +76,12 @@ export default function LoginScreen() {
       
       <KeyboardAvoidingView 
         style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="height" // Android specific
       >
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView 
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled" // Better for Android
+        >
           {/* Header */}
           <Animated.View 
             style={[
@@ -92,6 +102,7 @@ export default function LoginScreen() {
             <Text style={styles.tagline}>WHERE STUDENTS MEET HUSTLES</Text>
           </Animated.View>
 
+
           {/* Form */}
           <Animated.View 
             style={[
@@ -104,6 +115,7 @@ export default function LoginScreen() {
           >
             <Text style={styles.formTitle}>Welcome Back!</Text>
             <Text style={styles.formSubtitle}>Sign in to continue your hustle journey</Text>
+
 
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Email</Text>
@@ -124,6 +136,7 @@ export default function LoginScreen() {
               />
             </View>
 
+
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Password</Text>
               <TextInput
@@ -143,9 +156,11 @@ export default function LoginScreen() {
               />
             </View>
 
+
             <TouchableOpacity style={styles.forgotPassword}>
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
+
 
             <TouchableOpacity
               style={[
@@ -160,18 +175,21 @@ export default function LoginScreen() {
               </Text>
             </TouchableOpacity>
 
+
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
               <Text style={styles.dividerText}>or</Text>
               <View style={styles.dividerLine} />
             </View>
 
+
             <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
               <Text style={styles.signupButtonText}>Create New Account</Text>
             </TouchableOpacity>
           </Animated.View>
 
-          {/* Features */}
+
+          {/* Features - FIXED for Android */}
           <Animated.View 
             style={[
               styles.featuresContainer,
@@ -206,6 +224,7 @@ export default function LoginScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -215,7 +234,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flex: 1,
+    flexGrow: 1, // Changed from flex: 1 for better scrolling
     paddingHorizontal: Layout.screenPadding,
   },
   header: {
@@ -226,6 +245,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: BorderRadius['3xl'],
     borderBottomRightRadius: BorderRadius['3xl'],
     marginBottom: Spacing['2xl'],
+    marginHorizontal: -Layout.screenPadding, // Extend to edges
   },
   logoContainer: {
     marginBottom: Spacing.xl,
@@ -268,7 +288,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   formContainer: {
-    flex: 1,
     paddingTop: Spacing['2xl'],
   },
   formTitle: {
@@ -301,6 +320,7 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     fontSize: Typography.fontSize.base,
     ...Layout.inputPadding,
+    minHeight: 50, // Better for Android touch targets
   },
   inputFocused: {
     borderColor: Colors.borderFocus,
@@ -309,6 +329,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: Spacing['2xl'],
+    paddingVertical: Spacing.sm, // Better touch target
   },
   forgotPasswordText: {
     fontSize: Typography.fontSize.sm,
@@ -322,6 +343,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing['2xl'],
     ...Shadows.md,
+    minHeight: 50, // Better for Android
   },
   loginButtonDisabled: {
     backgroundColor: Colors.interactiveDisabled,
@@ -354,20 +376,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.interactive,
     marginBottom: Spacing['3xl'],
+    minHeight: 50, // Better for Android
   },
   signupButtonText: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.interactive,
   },
+  
+  // FIXED FEATURES SECTION FOR ANDROID
   featuresContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
   },
   featureItem: {
     alignItems: 'center',
-    flex: 1,
+    width: 70, // Fixed width to prevent overlapping
+    paddingVertical: Spacing.sm,
   },
   featureIconContainer: {
     width: 40,
@@ -377,6 +406,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
+    elevation: 2, // Android shadow
   },
   featureIcon: {
     fontSize: Typography.fontSize.lg,
@@ -386,5 +416,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: 'center',
     fontWeight: Typography.fontWeight.medium,
+    lineHeight: Typography.fontSize.xs * 1.2, // Better line height for Android
   },
 });
