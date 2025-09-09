@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,16 +11,50 @@ import {
   Alert,
   FlatList,
   Animated,
+  RefreshControl,
 } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
+// Import vector icons
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const { width } = Dimensions.get('window');
 const isSmallScreen = width < 360;
 const isTablet = width > 768;
 
+// Icon Component Helper
+const IconComponent = ({ iconType, name, size, color, style }) => {
+  const iconProps = { name, size, color, style };
+  
+  switch (iconType) {
+    case 'MaterialIcons':
+      return <MaterialIcons {...iconProps} />;
+    case 'MaterialCommunityIcons':
+      return <MaterialCommunityIcons {...iconProps} />;
+    case 'FontAwesome5':
+      return <FontAwesome5 {...iconProps} />;
+    case 'Ionicons':
+      return <Ionicons {...iconProps} />;
+    case 'Feather':
+      return <Feather {...iconProps} />;
+    case 'AntDesign':
+      return <AntDesign {...iconProps} />;
+    case 'Entypo':
+      return <Entypo {...iconProps} />;
+    default:
+      return <MaterialIcons name="help" size={size} color={color} style={style} />;
+  }
+};
+
 export default function MyTasksScreen() {
   const [activeTab, setActiveTab] = useState('active');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [refreshing, setRefreshing] = useState(false);
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(30)).current;
@@ -40,7 +74,7 @@ export default function MyTasksScreen() {
     ]).start();
   }, []);
 
-  // Task data
+  // Enhanced task data with better categories
   const [tasks] = useState({
     active: [
       {
@@ -48,7 +82,6 @@ export default function MyTasksScreen() {
         title: 'Data Structures Assignment',
         description: 'Need help with implementing binary trees and graph algorithms in C++',
         category: 'Academic',
-        categoryIconUri: 'https://img.icons8.com/ios-filled/16/4F46E5/school.png',
         budget: 750,
         deadline: '2024-09-05',
         timeLeft: '3 days',
@@ -64,7 +97,6 @@ export default function MyTasksScreen() {
         title: 'Web Development Project',
         description: 'Build a responsive e-commerce website using React and Node.js',
         category: 'Practical',
-        categoryIconUri: 'https://img.icons8.com/ios-filled/16/7C2D92/code.png',
         budget: 2500,
         deadline: '2024-09-10',
         timeLeft: '8 days',
@@ -80,7 +112,6 @@ export default function MyTasksScreen() {
         title: 'Campus Food Delivery',
         description: 'Pick up dinner from hostel mess and deliver to library',
         category: 'Delivery',
-        categoryIconUri: 'https://img.icons8.com/ios-filled/16/D97706/delivery-dining.png',
         budget: 80,
         deadline: '2024-09-03',
         timeLeft: '2 hours',
@@ -91,19 +122,33 @@ export default function MyTasksScreen() {
         postedDate: '2024-09-02',
         assignedTo: 'Rahul Kumar',
       },
+      {
+        id: 7,
+        title: 'Math Tutoring Session',
+        description: 'Need help with calculus and linear algebra concepts',
+        category: 'Tutoring',
+        budget: 400,
+        deadline: '2024-09-06',
+        timeLeft: '4 days',
+        status: 'Finding Helper',
+        responses: 8,
+        categoryColor: '#8B5CF6',
+        priority: 'normal',
+        postedDate: '2024-09-01',
+        skills: ['Mathematics', 'Calculus', 'Linear Algebra'],
+      },
     ],
     completed: [
       {
         id: 4,
         title: 'Machine Learning Notes',
         description: 'Complete notes for ML algorithms and implementations',
-        category: 'Notes',
-        categoryIconUri: 'https://img.icons8.com/ios-filled/16/DC2626/note.png',
+        category: 'Academic',
         budget: 600,
         completedDate: '2024-08-28',
         status: 'Completed',
         rating: 4.8,
-        categoryColor: '#DC2626',
+        categoryColor: '#4F46E5',
         completedBy: 'Priya Sharma',
       },
       {
@@ -111,7 +156,6 @@ export default function MyTasksScreen() {
         title: 'College Fest Photography',
         description: 'Event coverage for annual college festival',
         category: 'Events',
-        categoryIconUri: 'https://img.icons8.com/ios-filled/16/0891B2/camera-alt.png',
         budget: 1200,
         completedDate: '2024-08-25',
         status: 'Completed',
@@ -119,38 +163,112 @@ export default function MyTasksScreen() {
         categoryColor: '#0891B2',
         completedBy: 'Arjun Patel',
       },
+      {
+        id: 6,
+        title: 'Research Paper Review',
+        description: 'Literature review for machine learning research paper',
+        category: 'Research',
+        budget: 900,
+        completedDate: '2024-08-20',
+        status: 'Completed',
+        rating: 4.9,
+        categoryColor: '#EF4444',
+        completedBy: 'Dr. Sanjay Mehta',
+      },
     ],
   });
 
+  // Enhanced filters with vector icons
   const filters = [
-    { id: 'all', label: 'All', icon: '📋', color: Colors.textSecondary },
-    { id: 'Academic', label: 'Academic', icon: '📚', color: Colors.interactive },
-    { id: 'Delivery', label: 'Delivery', icon: '🚚', color: Colors.warning },
-    { id: 'Events', label: 'Events', icon: '🎉', color: Colors.info },
-    { id: 'Practical', label: 'Practical', icon: '🔧', color: Colors.success },
+    { 
+      id: 'all', 
+      label: 'All', 
+      iconType: 'MaterialCommunityIcons', 
+      iconName: 'view-grid', 
+      color: Colors.textSecondary 
+    },
+    { 
+      id: 'Academic', 
+      label: 'Academic', 
+      iconType: 'MaterialIcons', 
+      iconName: 'school', 
+      color: '#4F46E5' 
+    },
+    { 
+      id: 'Delivery', 
+      label: 'Delivery', 
+      iconType: 'MaterialCommunityIcons', 
+      iconName: 'truck-delivery', 
+      color: '#D97706' 
+    },
+    { 
+      id: 'Events', 
+      label: 'Events', 
+      iconType: 'MaterialCommunityIcons', 
+      iconName: 'calendar-star', 
+      color: '#0891B2' 
+    },
+    { 
+      id: 'Practical', 
+      label: 'Practical', 
+      iconType: 'Entypo', 
+      iconName: 'tools', 
+      color: '#059669' 
+    },
+    { 
+      id: 'Tutoring', 
+      label: 'Tutoring', 
+      iconType: 'FontAwesome5', 
+      iconName: 'chalkboard-teacher', 
+      color: '#8B5CF6' 
+    },
+    { 
+      id: 'Research', 
+      label: 'Research', 
+      iconType: 'MaterialIcons', 
+      iconName: 'science', 
+      color: '#EF4444' 
+    },
   ];
+
+  // Enhanced category icon mapping
+  const getCategoryIcon = (category) => {
+    const categoryIconMap = {
+      'Academic': { iconType: 'MaterialIcons', iconName: 'school', color: '#4F46E5' },
+      'Delivery': { iconType: 'MaterialCommunityIcons', iconName: 'truck-delivery', color: '#D97706' },
+      'Events': { iconType: 'MaterialCommunityIcons', iconName: 'calendar-star', color: '#0891B2' },
+      'Practical': { iconType: 'Entypo', iconName: 'tools', color: '#059669' },
+      'Tutoring': { iconType: 'FontAwesome5', iconName: 'chalkboard-teacher', color: '#8B5CF6' },
+      'Research': { iconType: 'MaterialIcons', iconName: 'science', color: '#EF4444' },
+    };
+    return categoryIconMap[category] || { iconType: 'MaterialIcons', iconName: 'help', color: Colors.textSecondary };
+  };
 
   const getStatusDetails = (status) => {
     const statusMap = {
       'In Progress': {
         color: Colors.warning,
         bgColor: '#FEF3C7',
-        icon: '⏳',
+        iconType: 'MaterialCommunityIcons',
+        iconName: 'progress-clock',
       },
       'Finding Helper': {
         color: Colors.textSecondary,
         bgColor: Colors.surfaceSecondary,
-        icon: '🔍',
+        iconType: 'Feather',
+        iconName: 'search',
       },
-      Assigned: {
+      'Assigned': {
         color: Colors.success,
         bgColor: '#D1FAE5',
-        icon: '👤',
+        iconType: 'MaterialIcons',
+        iconName: 'assignment-ind',
       },
-      Completed: {
+      'Completed': {
         color: Colors.success,
         bgColor: '#ECFDF5',
-        icon: '✅',
+        iconType: 'MaterialIcons',
+        iconName: 'check-circle',
       },
     };
     return statusMap[status] || statusMap['Finding Helper'];
@@ -172,31 +290,64 @@ export default function MyTasksScreen() {
     return { text: timeLeft, urgent: false };
   };
 
-  const filteredTasks = tasks[activeTab].filter(
-    (task) => selectedFilter === 'all' || task.category === selectedFilter
-  );
+  // Optimized filtering with useMemo
+  const filteredTasks = useMemo(() => {
+    return tasks[activeTab].filter(
+      (task) => selectedFilter === 'all' || task.category === selectedFilter
+    );
+  }, [tasks, activeTab, selectedFilter]);
 
-  const renderTaskCard = ({ item: task }) => {
+  // Enhanced refresh handler
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setRefreshing(false);
+  }, []);
+
+  const handleTaskPress = (task) => Alert.alert('Task Details', `View details for: ${task.title}`);
+  const handleViewTask = (task) => Alert.alert('View Task', `Opening details for: ${task.title}`);
+  const handleMessageTask = (task) => Alert.alert('Messages', `Opening chat for: ${task.title}`);
+
+  const renderTaskCard = (task) => {
     const statusDetails = getStatusDetails(task.status);
     const priorityDetails = getPriorityDetails(task.priority);
+    const categoryIcon = getCategoryIcon(task.category);
 
     return (
       <TouchableOpacity
+        key={task.id}
         style={[styles.taskCard, { borderLeftColor: task.categoryColor }]}
         activeOpacity={0.7}
         onPress={() => handleTaskPress(task)}
       >
         {task.priority && (
           <View style={[styles.priorityBadge, { backgroundColor: priorityDetails.bgColor }]}>
-            <Text style={[styles.priorityText, { color: priorityDetails.color }]}>{priorityDetails.label}</Text>
+            <MaterialIcons 
+              name="priority-high" 
+              size={12} 
+              color={priorityDetails.color} 
+              style={{ marginRight: 4 }} 
+            />
+            <Text style={[styles.priorityText, { color: priorityDetails.color }]}>
+              {priorityDetails.label}
+            </Text>
           </View>
         )}
 
         <View style={styles.taskHeader}>
           <View style={styles.taskTitleSection}>
             <View style={styles.categoryBadge}>
-              <Image source={{ uri: task.categoryIconUri }} style={styles.categoryIcon} />
-              <Text style={[styles.categoryText, { color: task.categoryColor }]}>{task.category}</Text>
+              <IconComponent 
+                iconType={categoryIcon.iconType} 
+                name={categoryIcon.iconName} 
+                size={14} 
+                color={categoryIcon.color}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={[styles.categoryText, { color: task.categoryColor }]}>
+                {task.category}
+              </Text>
             </View>
             <Text style={styles.taskTitle} numberOfLines={2}>
               {task.title}
@@ -204,8 +355,16 @@ export default function MyTasksScreen() {
           </View>
 
           <View style={[styles.statusBadge, { backgroundColor: statusDetails.bgColor }]}>
-            <Image source={{ uri: statusDetails.iconUri }} style={styles.statusIcon} />
-            <Text style={[styles.statusText, { color: statusDetails.color }]}>{task.status}</Text>
+            <IconComponent 
+              iconType={statusDetails.iconType} 
+              name={statusDetails.iconName} 
+              size={12} 
+              color={statusDetails.color}
+              style={{ marginRight: 4 }}
+            />
+            <Text style={[styles.statusText, { color: statusDetails.color }]}>
+              {task.status}
+            </Text>
           </View>
         </View>
 
@@ -220,31 +379,30 @@ export default function MyTasksScreen() {
                 <Text style={styles.skillText}>{skill}</Text>
               </View>
             ))}
-            {task.skills.length > 3 && <Text style={styles.moreSkills}>+{task.skills.length - 3} more</Text>}
+            {task.skills.length > 3 && (
+              <Text style={styles.moreSkills}>+{task.skills.length - 3} more</Text>
+            )}
           </View>
         )}
 
         <View style={styles.taskFooter}>
           <View style={styles.metaInfo}>
             <View style={styles.budgetContainer}>
-              <Image
-                source={{ uri: 'https://img.icons8.com/ios-filled/16/059669/cash-in-hand.png' }}
-                style={styles.footerIcon}
-              />
+              <MaterialIcons name="attach-money" size={14} color={Colors.success} />
               <Text style={styles.budgetText}>₹{task.budget}</Text>
             </View>
 
             {task.timeLeft && (
               <View style={styles.timeContainer}>
-                <Image
-                  source={{
-                    uri: formatTimeLeft(task.timeLeft).urgent
-                      ? 'https://img.icons8.com/ios-filled/16/EF4444/alarm.png'
-                      : 'https://img.icons8.com/ios-filled/16/6B7280/alarm.png',
-                  }}
-                  style={styles.footerIcon}
+                <MaterialIcons 
+                  name={formatTimeLeft(task.timeLeft).urgent ? "alarm" : "schedule"} 
+                  size={14} 
+                  color={formatTimeLeft(task.timeLeft).urgent ? Colors.error : Colors.textSecondary} 
                 />
-                <Text style={[styles.timeText, formatTimeLeft(task.timeLeft).urgent && styles.urgentTime]}>
+                <Text style={[
+                  styles.timeText, 
+                  formatTimeLeft(task.timeLeft).urgent && styles.urgentTime
+                ]}>
                   {task.timeLeft}
                 </Text>
               </View>
@@ -252,29 +410,34 @@ export default function MyTasksScreen() {
 
             {task.responses && (
               <View style={styles.responsesContainer}>
-                <Image
-                  source={{ uri: 'https://img.icons8.com/ios-filled/16/4F46E5/conference-call.png' }}
-                  style={styles.footerIcon}
-                />
+                <MaterialIcons name="people" size={14} color={Colors.interactive} />
                 <Text style={styles.responsesText}>{task.responses}</Text>
               </View>
             )}
 
             {task.rating && (
               <View style={styles.ratingContainer}>
-                <Image source={{ uri: 'https://img.icons8.com/ios-filled/16/F59E0B/star.png' }} style={styles.footerIcon} />
+                <MaterialIcons name="star" size={14} color={Colors.warning} />
                 <Text style={styles.ratingText}>{task.rating}</Text>
               </View>
             )}
           </View>
 
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.7} onPress={() => handleViewTask(task)}>
-              <Image source={{ uri: 'https://img.icons8.com/ios-filled/16/6B7280/visible.png' }} style={styles.footerIcon} />
+            <TouchableOpacity 
+              style={styles.secondaryButton} 
+              activeOpacity={0.7} 
+              onPress={() => handleViewTask(task)}
+            >
+              <MaterialIcons name="visibility" size={16} color={Colors.textSecondary} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.7} onPress={() => handleMessageTask(task)}>
-              <Image source={{ uri: 'https://img.icons8.com/ios-filled/16/FFFFFF/speech-bubble.png' }} style={styles.footerIconWhite} />
+            <TouchableOpacity 
+              style={styles.primaryButton} 
+              activeOpacity={0.7} 
+              onPress={() => handleMessageTask(task)}
+            >
+              <MaterialIcons name="chat" size={16} color={Colors.accent} />
               <Text style={styles.primaryButtonText}>Chat</Text>
             </TouchableOpacity>
           </View>
@@ -282,7 +445,7 @@ export default function MyTasksScreen() {
 
         {(task.assignedTo || task.completedBy) && (
           <View style={styles.assigneeContainer}>
-            <Image source={{ uri: 'https://img.icons8.com/ios-filled/14/6B7280/user.png' }} style={styles.assigneeIcon} />
+            <MaterialIcons name="person" size={14} color={Colors.textSecondary} />
             <Text style={styles.assigneeText}>
               {task.assignedTo ? `Assigned to: ${task.assignedTo}` : `Completed by: ${task.completedBy}`}
             </Text>
@@ -291,12 +454,6 @@ export default function MyTasksScreen() {
       </TouchableOpacity>
     );
   };
-
-  const handleTaskPress = (task) => Alert.alert('Task Details', `View details for: ${task.title}`);
-
-  const handleViewTask = (task) => Alert.alert('View Task', `Opening details for: ${task.title}`);
-
-  const handleMessageTask = (task) => Alert.alert('Messages', `Opening chat for: ${task.title}`);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -325,8 +482,14 @@ export default function MyTasksScreen() {
         <Text style={styles.headerTitle}>My Tasks</Text>
       </Animated.View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Stats Overview */}
+      <ScrollView 
+        style={styles.content} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {/* Enhanced Stats Overview */}
         <Animated.View 
           style={[
             styles.statsContainer,
@@ -339,7 +502,7 @@ export default function MyTasksScreen() {
           <View style={styles.statsCard}>
             <View style={styles.statItem}>
               <View style={styles.statIconContainer}>
-                <Text style={styles.statIcon}>📋</Text>
+                <MaterialIcons name="assignment" size={20} color={Colors.interactive} />
               </View>
               <Text style={styles.statNumber}>{tasks.active.length}</Text>
               <Text style={styles.statLabel}>Active</Text>
@@ -347,7 +510,7 @@ export default function MyTasksScreen() {
 
             <View style={styles.statItem}>
               <View style={styles.statIconContainer}>
-                <Text style={styles.statIcon}>✅</Text>
+                <MaterialIcons name="check-circle" size={20} color={Colors.success} />
               </View>
               <Text style={styles.statNumber}>{tasks.completed.length}</Text>
               <Text style={styles.statLabel}>Completed</Text>
@@ -355,7 +518,7 @@ export default function MyTasksScreen() {
 
             <View style={styles.statItem}>
               <View style={styles.statIconContainer}>
-                <Text style={styles.statIcon}>💰</Text>
+                <MaterialIcons name="account-balance-wallet" size={20} color={Colors.warning} />
               </View>
               <Text style={styles.statNumber}>₹5.1K</Text>
               <Text style={styles.statLabel}>Total Value</Text>
@@ -363,7 +526,7 @@ export default function MyTasksScreen() {
 
             <View style={styles.statItem}>
               <View style={styles.statIconContainer}>
-                <Text style={styles.statIcon}>⭐</Text>
+                <MaterialIcons name="star" size={20} color={Colors.warning} />
               </View>
               <Text style={styles.statNumber}>4.9</Text>
               <Text style={styles.statLabel}>Rating</Text>
@@ -371,7 +534,7 @@ export default function MyTasksScreen() {
           </View>
         </Animated.View>
 
-        {/* Tab Navigation */}
+        {/* Enhanced Tab Navigation */}
         <Animated.View 
           style={[
             styles.tabContainer,
@@ -386,7 +549,11 @@ export default function MyTasksScreen() {
             onPress={() => setActiveTab('active')}
             activeOpacity={0.7}
           >
-            <Text style={styles.tabIcon}>⏳</Text>
+            <MaterialCommunityIcons 
+              name="progress-clock" 
+              size={16} 
+              color={activeTab === 'active' ? Colors.accent : Colors.textSecondary} 
+            />
             <Text style={[styles.tabText, activeTab === 'active' && styles.activeTabText]}>
               Active ({tasks.active.length})
             </Text>
@@ -397,14 +564,18 @@ export default function MyTasksScreen() {
             onPress={() => setActiveTab('completed')}
             activeOpacity={0.7}
           >
-            <Text style={styles.tabIcon}>✅</Text>
+            <MaterialIcons 
+              name="check-circle" 
+              size={16} 
+              color={activeTab === 'completed' ? Colors.accent : Colors.textSecondary} 
+            />
             <Text style={[styles.tabText, activeTab === 'completed' && styles.activeTabText]}>
               Completed ({tasks.completed.length})
             </Text>
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Filter Options */}
+        {/* Enhanced Filter Options */}
         <Animated.View 
           style={[
             styles.filterContainer,
@@ -422,12 +593,24 @@ export default function MyTasksScreen() {
             {filters.map((filter) => (
               <TouchableOpacity
                 key={filter.id}
-                style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipSelected]}
+                style={[
+                  styles.filterChip, 
+                  selectedFilter === filter.id && styles.filterChipSelected,
+                  selectedFilter === filter.id && { backgroundColor: filter.color + '15', borderColor: filter.color }
+                ]}
                 onPress={() => setSelectedFilter(filter.id)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.filterIcon}>{filter.icon}</Text>
-                <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextSelected]}>
+                <IconComponent 
+                  iconType={filter.iconType} 
+                  name={filter.iconName} 
+                  size={16} 
+                  color={selectedFilter === filter.id ? filter.color : Colors.textSecondary}
+                />
+                <Text style={[
+                  styles.filterChipText, 
+                  selectedFilter === filter.id && { color: filter.color }
+                ]}>
                   {filter.label}
                 </Text>
               </TouchableOpacity>
@@ -435,7 +618,7 @@ export default function MyTasksScreen() {
           </ScrollView>
         </Animated.View>
 
-        {/* Task List */}
+        {/* Enhanced Task List */}
         {filteredTasks.length > 0 ? (
           <Animated.View 
             style={[
@@ -446,109 +629,7 @@ export default function MyTasksScreen() {
               },
             ]}
           >
-            {filteredTasks.map((task) => {
-              const statusDetails = getStatusDetails(task.status);
-              const priorityDetails = getPriorityDetails(task.priority);
-
-              return (
-                <TouchableOpacity
-                  key={task.id}
-                  style={[styles.taskCard, { borderLeftColor: task.categoryColor }]}
-                  activeOpacity={0.7}
-                  onPress={() => handleTaskPress(task)}
-                >
-                  {task.priority && (
-                    <View style={[styles.priorityBadge, { backgroundColor: priorityDetails.bgColor }]}>
-                      <Text style={[styles.priorityText, { color: priorityDetails.color }]}>{priorityDetails.label}</Text>
-                    </View>
-                  )}
-
-                  <View style={styles.taskHeader}>
-                    <View style={styles.taskTitleSection}>
-                      <View style={styles.categoryBadge}>
-                        <Text style={styles.categoryIcon}>{task.category === 'Academic' ? '📚' : task.category === 'Delivery' ? '🚚' : task.category === 'Events' ? '🎉' : '🔧'}</Text>
-                        <Text style={[styles.categoryText, { color: task.categoryColor }]}>{task.category}</Text>
-                      </View>
-                      <Text style={styles.taskTitle} numberOfLines={2}>
-                        {task.title}
-                      </Text>
-                    </View>
-
-                    <View style={[styles.statusBadge, { backgroundColor: statusDetails.bgColor }]}>
-                      <Text style={styles.statusIcon}>{statusDetails.icon}</Text>
-                      <Text style={[styles.statusText, { color: statusDetails.color }]}>{task.status}</Text>
-                    </View>
-                  </View>
-
-                  <Text style={styles.taskDescription} numberOfLines={2}>
-                    {task.description}
-                  </Text>
-
-                  {task.skills && (
-                    <View style={styles.skillsContainer}>
-                      {task.skills.slice(0, 3).map((skill, index) => (
-                        <View key={index} style={styles.skillTag}>
-                          <Text style={styles.skillText}>{skill}</Text>
-                        </View>
-                      ))}
-                      {task.skills.length > 3 && <Text style={styles.moreSkills}>+{task.skills.length - 3} more</Text>}
-                    </View>
-                  )}
-
-                  <View style={styles.taskFooter}>
-                    <View style={styles.metaInfo}>
-                      <View style={styles.budgetContainer}>
-                        <Text style={styles.footerIcon}>💰</Text>
-                        <Text style={styles.budgetText}>₹{task.budget}</Text>
-                      </View>
-
-                      {task.timeLeft && (
-                        <View style={styles.timeContainer}>
-                          <Text style={styles.footerIcon}>⏰</Text>
-                          <Text style={[styles.timeText, formatTimeLeft(task.timeLeft).urgent && styles.urgentTime]}>
-                            {task.timeLeft}
-                          </Text>
-                        </View>
-                      )}
-
-                      {task.responses && (
-                        <View style={styles.responsesContainer}>
-                          <Text style={styles.footerIcon}>👥</Text>
-                          <Text style={styles.responsesText}>{task.responses}</Text>
-                        </View>
-                      )}
-
-                      {task.rating && (
-                        <View style={styles.ratingContainer}>
-                          <Text style={styles.footerIcon}>⭐</Text>
-                          <Text style={styles.ratingText}>{task.rating}</Text>
-                        </View>
-                      )}
-                    </View>
-
-                    <View style={styles.actionButtons}>
-                      <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.7} onPress={() => handleViewTask(task)}>
-                        <Text style={styles.footerIcon}>👁️</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity style={styles.primaryButton} activeOpacity={0.7} onPress={() => handleMessageTask(task)}>
-                        <Text style={styles.footerIconWhite}>💬</Text>
-                        <Text style={styles.primaryButtonText}>Chat</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  {(task.assignedTo || task.completedBy) && (
-                    <View style={styles.assigneeContainer}>
-                      <Text style={styles.assigneeIcon}>👤</Text>
-                      <Text style={styles.assigneeText}>
-                        {task.assignedTo ? `Assigned to: ${task.assignedTo}` : `Completed by: ${task.completedBy}`}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
+            {filteredTasks.map((task) => renderTaskCard(task))}
           </Animated.View>
         ) : (
           <Animated.View 
@@ -561,9 +642,11 @@ export default function MyTasksScreen() {
             ]}
           >
             <View style={styles.emptyStateIcon}>
-              <Text style={styles.emptyStateIconText}>
-                {activeTab === 'active' ? '📋' : '✅'}
-              </Text>
+              <MaterialIcons 
+                name={activeTab === 'active' ? "assignment" : "check-circle"} 
+                size={40} 
+                color={Colors.textTertiary} 
+              />
             </View>
             <Text style={styles.emptyStateTitle}>
               {activeTab === 'active' ? 'No Active Tasks' : 'No Completed Tasks Yet'}
@@ -574,7 +657,7 @@ export default function MyTasksScreen() {
                 : 'Your completed tasks will appear here once you finish them.'}
             </Text>
             <TouchableOpacity style={styles.emptyStateButton} activeOpacity={0.7}>
-              <Text style={styles.emptyStateButtonIcon}>➕</Text>
+              <MaterialIcons name="add" size={20} color={Colors.accent} />
               <Text style={styles.emptyStateButtonText}>Post New Task</Text>
             </TouchableOpacity>
           </Animated.View>
@@ -677,9 +760,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.sm,
   },
-  statIcon: {
-    fontSize: Typography.fontSize.lg,
-  },
   statNumber: {
     fontSize: isSmallScreen ? Typography.fontSize.base : Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.extrabold,
@@ -722,9 +802,6 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: Colors.accent,
   },
-  tabIcon: {
-    fontSize: Typography.fontSize.base,
-  },
   filterContainer: {
     marginBottom: Spacing.lg,
   },
@@ -744,19 +821,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   filterChipSelected: {
-    backgroundColor: Colors.interactive,
-    borderColor: Colors.interactive,
+    borderWidth: 1,
   },
   filterChipText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.textSecondary,
-  },
-  filterChipTextSelected: {
-    color: Colors.accent,
-  },
-  filterIcon: {
-    fontSize: Typography.fontSize.base,
   },
   listContainer: {
     paddingBottom: Spacing['6xl'],
@@ -777,6 +847,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   priorityText: {
     fontSize: Typography.fontSize.xs,
@@ -803,14 +875,10 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     alignSelf: 'flex-start',
     marginBottom: Spacing.sm,
-    gap: Spacing.xs,
   },
   categoryText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.bold,
-  },
-  categoryIcon: {
-    fontSize: Typography.fontSize.sm,
   },
   taskTitle: {
     fontSize: Typography.fontSize.lg,
@@ -824,7 +892,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.xs,
     alignSelf: 'flex-start',
     maxWidth: 120,
     flexShrink: 1,
@@ -832,9 +899,6 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.bold,
-  },
-  statusIcon: {
-    fontSize: Typography.fontSize.sm,
   },
   taskDescription: {
     fontSize: Typography.fontSize.sm,
@@ -951,13 +1015,6 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.accent,
   },
-  footerIcon: {
-    fontSize: Typography.fontSize.base,
-  },
-  footerIconWhite: {
-    fontSize: Typography.fontSize.base,
-    color: Colors.accent,
-  },
   assigneeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -966,9 +1023,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.surfaceSecondary,
     gap: Spacing.sm,
-  },
-  assigneeIcon: {
-    fontSize: Typography.fontSize.sm,
   },
   assigneeText: {
     fontSize: Typography.fontSize.sm,
@@ -990,9 +1044,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing['2xl'],
-  },
-  emptyStateIconText: {
-    fontSize: Typography.fontSize['4xl'],
   },
   emptyStateTitle: {
     fontSize: Typography.fontSize.xl,
@@ -1016,10 +1067,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.full,
     gap: Spacing.sm,
-  },
-  emptyStateButtonIcon: {
-    fontSize: Typography.fontSize.lg,
-    color: Colors.accent,
   },
   emptyStateButtonText: {
     fontSize: Typography.fontSize.base,
