@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { Colors, Typography, Spacing, BorderRadius, Shadows, Layout, CommonStyles } from '../styles/DesignSystem';
+// Import for better icons
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function LoginScreen() {
@@ -76,11 +78,11 @@ export default function LoginScreen() {
       
       <KeyboardAvoidingView 
         style={styles.keyboardView}
-        behavior="height" // Android specific
+        behavior="height"
       >
         <ScrollView 
           contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled" // Better for Android
+          keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
           <Animated.View 
@@ -189,7 +191,7 @@ export default function LoginScreen() {
           </Animated.View>
 
 
-          {/* Features - FIXED for Android */}
+          {/* Features with Better Icons */}
           <Animated.View 
             style={[
               styles.featuresContainer,
@@ -201,19 +203,19 @@ export default function LoginScreen() {
           >
             <View style={styles.featureItem}>
               <View style={styles.featureIconContainer}>
-                <Text style={styles.featureIcon}>🔒</Text>
+                <MaterialIcons name="verified-user" size={20} color={Colors.interactive} />
               </View>
               <Text style={styles.featureText}>Secure</Text>
             </View>
             <View style={styles.featureItem}>
               <View style={styles.featureIconContainer}>
-                <Text style={styles.featureIcon}>✅</Text>
+                <MaterialIcons name="task-alt" size={20} color={Colors.success || Colors.interactive} />
               </View>
               <Text style={styles.featureText}>Verified</Text>
             </View>
             <View style={styles.featureItem}>
               <View style={styles.featureIconContainer}>
-                <Text style={styles.featureIcon}>🤝</Text>
+                <MaterialIcons name="stars" size={20} color={Colors.interactive} />
               </View>
               <Text style={styles.featureText}>Trusted</Text>
             </View>
@@ -234,7 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flexGrow: 1, // Changed from flex: 1 for better scrolling
+    flexGrow: 1,
     paddingHorizontal: Layout.screenPadding,
   },
   header: {
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: BorderRadius['3xl'],
     borderBottomRightRadius: BorderRadius['3xl'],
     marginBottom: Spacing['2xl'],
-    marginHorizontal: -Layout.screenPadding, // Extend to edges
+    marginHorizontal: -Layout.screenPadding,
   },
   logoContainer: {
     marginBottom: Spacing.xl,
@@ -320,7 +322,7 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     fontSize: Typography.fontSize.base,
     ...Layout.inputPadding,
-    minHeight: 50, // Better for Android touch targets
+    minHeight: 50,
   },
   inputFocused: {
     borderColor: Colors.borderFocus,
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: Spacing['2xl'],
-    paddingVertical: Spacing.sm, // Better touch target
+    paddingVertical: Spacing.sm,
   },
   forgotPasswordText: {
     fontSize: Typography.fontSize.sm,
@@ -343,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing['2xl'],
     ...Shadows.md,
-    minHeight: 50, // Better for Android
+    minHeight: 50,
   },
   loginButtonDisabled: {
     backgroundColor: Colors.interactiveDisabled,
@@ -376,15 +378,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.interactive,
     marginBottom: Spacing['3xl'],
-    minHeight: 50, // Better for Android
+    minHeight: 50,
   },
   signupButtonText: {
     fontSize: Typography.fontSize.base,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.interactive,
   },
-  
-  // FIXED FEATURES SECTION FOR ANDROID
   featuresContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   },
   featureItem: {
     alignItems: 'center',
-    width: 70, // Fixed width to prevent overlapping
+    width: 70,
     paddingVertical: Spacing.sm,
   },
   featureIconContainer: {
@@ -406,16 +406,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
-    elevation: 2, // Android shadow
-  },
-  featureIcon: {
-    fontSize: Typography.fontSize.lg,
+    elevation: 2,
   },
   featureText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
     textAlign: 'center',
     fontWeight: Typography.fontWeight.medium,
-    lineHeight: Typography.fontSize.xs * 1.2, // Better line height for Android
+    lineHeight: Typography.fontSize.xs * 1.2,
   },
 });
